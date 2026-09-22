@@ -1628,25 +1628,31 @@ export default function CustomerPage() {
               </div>
             </div>
 
-            {/* Prominent Counter Code Box with Dedicated Reward Suffix */}
-            <div className="glass-panel-subtle border-2 border-[#0A52A9]/40 rounded-2xl p-4 mb-3 text-center shadow-xs">
-              <span className="text-[10px] uppercase tracking-wider font-mono text-neutral-500 block mb-1 font-semibold">
+            {/* Prominent Counter Code Box with Dedicated Reward Suffix - strictly single line */}
+            <div className="glass-panel-subtle border-2 border-[#0A52A9]/40 rounded-2xl p-3 sm:p-4 mb-3 text-center shadow-xs">
+              <span className="text-[10px] uppercase tracking-wider font-mono text-neutral-500 block mb-1.5 font-semibold">
                 Give this Reward Code to Cashier
               </span>
-              <div className="flex items-center justify-center gap-2">
-                <span className="font-pin text-2xl sm:text-3xl font-bold tracking-wider text-[#0A52A9] select-all">
-                  {customer.formattedPin} - <span className="bg-[#0A52A9] text-[#F4EECF] px-2 py-0.5 rounded-lg text-lg sm:text-xl font-mono inline-block shadow-2xs">{redeemingReward.claimCode || "R1"}</span>
-                </span>
+              <div className="flex items-center justify-center gap-2 whitespace-nowrap overflow-x-auto py-0.5">
+                <div className="flex items-center justify-center gap-1 sm:gap-1.5 font-pin font-bold text-[#0A52A9] select-all whitespace-nowrap tracking-normal sm:tracking-wider">
+                  <span className="text-xl sm:text-2xl md:text-3xl">
+                    {customer.formattedPin}
+                  </span>
+                  <span className="text-neutral-400 text-lg sm:text-xl font-bold px-0.5">-</span>
+                  <span className="bg-[#0A52A9] text-[#F4EECF] px-2 py-0.5 rounded-lg text-lg sm:text-2xl font-mono font-black tracking-widest shadow-2xs">
+                    {redeemingReward.claimCode || "10"}
+                  </span>
+                </div>
                 <button
                   onClick={() =>
                     handleCopyPin(
                       `${(customer.rawPin || customer.formattedPin || "").replace(/\D/g, "")}-${
-                        redeemingReward.claimCode || "R1"
+                        redeemingReward.claimCode || "10"
                       }`
                     )
                   }
-                  className="p-1.5 rounded-lg border border-[#E6DEBA] bg-white/80 hover:bg-[#FDFBF4] text-neutral-600 transition-colors active:scale-95 cursor-pointer"
-                  title="Copy Reward Code"
+                  className="p-1.5 sm:p-2 rounded-xl border border-[#E6DEBA] bg-white/90 hover:bg-[#FDFBF4] text-neutral-600 transition-colors active:scale-95 cursor-pointer shrink-0 shadow-2xs"
+                  title="Copy Full Reward Code"
                 >
                   {copied ? (
                     <Check className="w-4 h-4 text-emerald-600" />
@@ -1656,7 +1662,7 @@ export default function CustomerPage() {
                 </button>
               </div>
               {copied && (
-                <span className="text-[10px] font-mono text-[#0A52A9] mt-1 block">
+                <span className="text-[10px] font-mono text-[#0A52A9] mt-1.5 block">
                   Copied reward code to clipboard!
                 </span>
               )}
@@ -1666,7 +1672,7 @@ export default function CustomerPage() {
             <div className="flex flex-col items-center justify-center mb-4">
               <div className="p-2.5 bg-white rounded-xl border border-[#E6DEBA] shadow-2xs">
                 <QRCodeSVG
-                  value={`${customer.qrSecret}:CLAIM:${redeemingReward.claimCode || "R1"}`}
+                  value={`${customer.qrSecret}:CLAIM:${redeemingReward.claimCode || "10"}`}
                   size={124}
                   level="H"
                   includeMargin={false}

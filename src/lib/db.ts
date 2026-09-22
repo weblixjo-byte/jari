@@ -478,12 +478,8 @@ export const dbService = {
 
   // Rewards
   async getRewards(activeOnly: boolean = true): Promise<IReward[]> {
-    const letters = ["R", "J", "B", "C", "M", "P", "S", "T", "W", "K", "F", "L", "D", "N", "V"];
-    const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
     const getFallbackCode = (idx: number) => {
-      const l = letters[idx % letters.length];
-      const d = digits[(idx * 3 + 1) % digits.length];
-      return `${l}${d}`;
+      return String(((idx * 7 + 11) % 90) + 10);
     };
 
     const { isMongoose } = await connectDB();
@@ -543,48 +539,39 @@ export const dbService = {
   },
 
   async createReward(data: Partial<IReward>): Promise<IReward> {
-    // Unambiguous letters (excludes O, I to prevent confusion with 0, 1)
-    const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
-    const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
-    
-    const genCode = () => {
-      const l = letters[Math.floor(Math.random() * letters.length)];
-      const d = digits[Math.floor(Math.random() * digits.length)];
-      return `${l}${d}`;
+    // Generate strictly 2-digit numeric codes (e.g. 10 to 99)
+    const gen2DigitCode = () => {
+      return String(Math.floor(Math.random() * 90 + 10));
     };
 
     const { isMongoose } = await connectDB();
     if (isMongoose) {
       try {
         const existing = await Reward.find({}).lean();
-        const existingCodes = new Set(existing.map((x: any) => x.claimCode?.toUpperCase()).filter(Boolean));
-        let finalCode = data.claimCode ? data.claimCode.trim().toUpperCase() : "";
+        const existingCodes = new Set(existing.map((x: any) => x.claimCode?.trim()).filter(Boolean));
+        let finalCode = data.claimCode ? data.claimCode.trim() : "";
         
         if (!finalCode) {
-          // Attempt 150 times with 2-char format (Letter + Digit, e.g. R1, J6)
-          for (let attempt = 0; attempt < 150; attempt++) {
-            const candidate = genCode();
+          // Find an available 2-digit number (10-99)
+          for (let attempt = 0; attempt < 200; attempt++) {
+            const candidate = gen2DigitCode();
             if (!existingCodes.has(candidate)) {
               finalCode = candidate;
               break;
             }
           }
-          // If high density, scale to 3-char format (Letter + 2 Digits, e.g. R12)
+          // If all 90 two-digit codes are occupied, scale to 3 digits (100-999)
           if (!finalCode) {
             for (let attempt = 0; attempt < 1000; attempt++) {
-              const l = letters[Math.floor(Math.random() * letters.length)];
-              const d1 = digits[Math.floor(Math.random() * digits.length)];
-              const d2 = digits[Math.floor(Math.random() * digits.length)];
-              const candidate = `${l}${d1}${d2}`;
+              const candidate = String(Math.floor(Math.random() * 900 + 100));
               if (!existingCodes.has(candidate)) {
                 finalCode = candidate;
                 break;
               }
             }
           }
-          // Ultimate fallback guarantee
           if (!finalCode) {
-            finalCode = `R${Date.now().toString().slice(-3)}`;
+            finalCode = String(Date.now()).slice(-2);
           }
         }
 
@@ -607,18 +594,18 @@ export const dbService = {
     }
 
     const existing = memoryStore.rewards;
-    const existingCodes = new Set(existing.map((x: any) => x.claimCode?.toUpperCase()).filter(Boolean));
-    let finalCode = data.claimCode ? data.claimCode.trim().toUpperCase() : "";
+    const existingCodes = new Set(existing.map((x: any) => x.claimCode?.trim()).filter(Boolean));
+    let finalCode = data.claimCode ? data.claimCode.trim() : "";
     if (!finalCode) {
-      for (let attempt = 0; attempt < 150; attempt++) {
-        const candidate = genCode();
+      for (let attempt = 0; attempt < 200; attempt++) {
+        const candidate = gen2DigitCode();
         if (!existingCodes.has(candidate)) {
           finalCode = candidate;
           break;
         }
       }
       if (!finalCode) {
-        finalCode = `${letters[0]}${Math.floor(Math.random() * 90 + 10)}`;
+        finalCode = String(Math.floor(Math.random() * 900 + 100));
       }
     }
 

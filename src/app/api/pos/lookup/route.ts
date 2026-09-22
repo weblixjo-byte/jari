@@ -39,12 +39,24 @@ export async function POST(req: Request) {
       } catch {}
     }
 
-    // Check if cleaned is formatted as 6 digits + 2-3 alphanumeric suffix:
-    // e.g. "482-910-R1", "482 910 R1", "482910R1", "482910-R1"
-    const pinWithSuffixMatch = cleaned.match(/^(\d{3})\s*[- ]?\s*(\d{3})\s*[- ]?\s*([A-Za-z]\d|[A-Za-z]{1,2}\d?)$/i);
-    if (pinWithSuffixMatch) {
-      cleaned = `${pinWithSuffixMatch[1]}${pinWithSuffixMatch[2]}`; // "482910"
-      requestedClaimCode = pinWithSuffixMatch[3].toUpperCase(); // "R1"
+    // Check if cleaned is formatted as 6 digits + 2 numeric digits (8 digits total):
+    // e.g. "576-565-42", "576 565 42", "576565-42", "57656542"
+    const pinWith2DigitsMatch = cleaned.match(/^(\d{3})\s*[- ]?\s*(\d{3})\s*[- ]?\s*(\d{2})$/);
+    if (pinWith2DigitsMatch) {
+      cleaned = `${pinWith2DigitsMatch[1]}${pinWith2DigitsMatch[2]}`; // "576565"
+      requestedClaimCode = pinWith2DigitsMatch[3]; // "42"
+    } else if (cleaned.replace(/\D/g, "").length === 8) {
+      // Direct 8-digit numeric input
+      const digits = cleaned.replace(/\D/g, "");
+      cleaned = digits.slice(0, 6);
+      requestedClaimCode = digits.slice(6, 8);
+    } else {
+      // Fallback for custom or legacy alphanumeric
+      const pinWithSuffixMatch = cleaned.match(/^(\d{3})\s*[- ]?\s*(\d{3})\s*[- ]?\s*([A-Za-z0-9]{2,3})$/i);
+      if (pinWithSuffixMatch) {
+        cleaned = `${pinWithSuffixMatch[1]}${pinWithSuffixMatch[2]}`;
+        requestedClaimCode = pinWithSuffixMatch[3].toUpperCase();
+      }
     }
 
     // If scanned data is a full URL, extract relevant query parameters
@@ -116,28 +128,25 @@ export async function POST(req: Request) {
           (requestedRewardId && r._id === requestedRewardId)
       );
       if (!match) {
-        const allRewards = await dbService.getRewards(false);
-        match = allRewards.find(
-          (r) =>
-            (requestedClaimCode && r.claimCode?.toUpperCase() === requestedClaimCode) ||
-            (requestedRewardId && r._id === requestedRewardId)
+        return NextResponse.json(
+          { error: `Reward code "${requestedClaimCode}" is invalid or expired. Please check customer pass.` },
+          { status: 404 }
         );
       }
-      if (match) {
-        pendingReward = {
-          id: match._id,
-          title: match.title,
-          pointsRequired: match.pointsRequired,
-          category: match.category,
-          imageUrl: match.imageUrl,
-          claimCode: match.claimCode,
-          canRedeem: customer.pointsBalance >= match.pointsRequired,
-        };
-      }
+      pendingReward = {
+        id: match._id,
+        title: match.title,
+        pointsRequired: match.pointsRequired,
+        category: match.category,
+        imageUrl: match.imageUrl,
+        claimCode: match.claimCode,
+        canRedeem: customer.pointsBalance >= match.pointsRequired,
+      };
     }
 
     return NextResponse.json({
       success: true,
+      mode: pendingReward ? "redeem" : "credit",
       customer: {
         id: customer._id,
         name: customer.name,

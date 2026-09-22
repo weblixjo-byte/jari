@@ -1867,18 +1867,18 @@ export default function AdminPage() {
 
                 <div>
                   <label className="block text-xs font-semibold text-[#0B192C] mb-1">
-                    Claim Code (Optional)
+                    2-Digit Code (Optional)
                   </label>
                   <input
                     type="text"
-                    maxLength={3}
+                    maxLength={2}
                     value={newReward.claimCode}
                     onChange={(e) =>
-                      setNewReward({ ...newReward, claimCode: e.target.value.toUpperCase().trim() })
+                      setNewReward({ ...newReward, claimCode: e.target.value.replace(/\D/g, "").slice(0, 2) })
                     }
-                    placeholder="Auto (e.g. R1)"
-                    className="glass-input w-full font-mono uppercase"
-                    title="Short 2-character code e.g. R1, J6. Leave empty to auto-generate."
+                    placeholder="Auto (e.g. 25)"
+                    className="glass-input w-full font-mono text-center font-bold"
+                    title="2-digit numeric code e.g. 15, 25, 50. Leave empty to auto-generate."
                   />
                 </div>
               </div>
