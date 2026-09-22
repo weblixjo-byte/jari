@@ -16,45 +16,45 @@ async function generate() {
 
   const srcBuffer = fs.readFileSync(srcPath);
 
-  // 1. Logo (clean high-res 1024x1024)
+  // 1. Logo (clean optimized 320x320 for instant web & mobile loading, razor-sharp on 4K)
   await sharp(srcBuffer)
-    .resize(1024, 1024, { fit: 'contain' })
-    .png()
+    .resize(320, 320, { fit: 'contain' })
+    .png({ compressionLevel: 9, effort: 10, quality: 85 })
     .toFile('public/logo.png');
-  console.log('Saved public/logo.png');
+  console.log('Saved compressed public/logo.png');
 
   // 2. Standard PWA Icon 192
   await sharp(srcBuffer)
     .resize(192, 192, { fit: 'contain' })
-    .png()
+    .png({ compressionLevel: 9, effort: 10, quality: 85 })
     .toFile('public/icon-192.png');
   console.log('Saved public/icon-192.png');
 
   // 3. Standard PWA Icon 512
   await sharp(srcBuffer)
     .resize(512, 512, { fit: 'contain' })
-    .png()
+    .png({ compressionLevel: 9, effort: 10, quality: 85 })
     .toFile('public/icon-512.png');
   console.log('Saved public/icon-512.png');
 
   // 4. Apple Touch Icon 180x180
   await sharp(srcBuffer)
     .resize(180, 180, { fit: 'contain' })
-    .png()
+    .png({ compressionLevel: 9, effort: 10, quality: 85 })
     .toFile('public/apple-touch-icon.png');
   console.log('Saved public/apple-touch-icon.png');
 
   // 5. Favicon PNG (48x48)
   await sharp(srcBuffer)
     .resize(48, 48, { fit: 'contain' })
-    .png()
+    .png({ compressionLevel: 9, effort: 10, quality: 85 })
     .toFile('public/favicon.png');
   console.log('Saved public/favicon.png');
 
   // Favicon ICO (32x32)
   await sharp(srcBuffer)
     .resize(32, 32, { fit: 'contain' })
-    .png()
+    .png({ compressionLevel: 9, effort: 10, quality: 85 })
     .toFile('public/favicon.ico');
   console.log('Saved public/favicon.ico');
 
@@ -96,7 +96,7 @@ async function generate() {
       { input: logoResized, top: Math.round(size * 0.02), left: Math.round((size - innerSize)/2) },
       { input: svgBadge, top: size - badgeHeight - Math.round(size * 0.04), left: Math.round((size - badgeWidth)/2) }
     ])
-    .png()
+    .png({ compressionLevel: 9, effort: 10, quality: 85 })
     .toFile(filename);
 
     console.log('Saved cashier icon:', filename);
@@ -105,7 +105,7 @@ async function generate() {
   await makeCashierIcon(192, 'public/icon-cashier-192.png');
   await makeCashierIcon(512, 'public/icon-cashier-512.png');
   await makeCashierIcon(180, 'public/apple-touch-icon-cashier.png');
-  console.log('ALL JARI ICONS GENERATED SUCCESSFULLY!');
+  console.log('ALL JARI ICONS GENERATED AND COMPRESSED SUCCESSFULLY!');
 }
 
 generate().catch(err => {

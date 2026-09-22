@@ -65,6 +65,9 @@ export default function RootLayout({
         <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
         <meta name="googlebot" content="noindex, nofollow" />
 
+        {/* High-priority asset preloading */}
+        <link rel="preload" href="/logo.png" as="image" type="image/png" fetchPriority="high" />
+
         {/* Icons shared across all routes */}
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
