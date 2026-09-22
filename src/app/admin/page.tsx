@@ -712,32 +712,47 @@ export default function AdminPage() {
     setTicketSuccess(null);
 
     try {
-      const res = await fetch("/api/admin/support", {
+      const payload = {
+        access_key: "7f0e27f4-7df7-4105-af7a-985d05cc02d1",
+        subject: `[Support Ticket] ${ticketCategory}: ${ticketSubject.trim()}`,
+        from_name: `${admin?.name || "Store Admin"} (Jari Loyalty Portal)`,
+        email: "info@weblix-jo.com",
+        "Store Name": config.storeName || "Jari Loyalty",
+        "Issue Category": ticketCategory,
+        "Subject": ticketSubject.trim(),
+        "Description": ticketMessage.trim(),
+        "Contact Phone": ticketPhone.trim() || "Not provided",
+        "Submitted At": new Date().toLocaleString("en-US", { timeZone: "Asia/Amman" }) + " (Amman Time)",
+        botcheck: "",
+      };
+
+      const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: ticketSubject.trim(),
-          message: ticketMessage.trim(),
-          category: ticketCategory,
-          contactPhone: ticketPhone.trim(),
-          senderName: admin?.name || "Jari Admin",
-        }),
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setTicketSuccess(
-          data.ticketId
-            ? `${t.ticketSuccessMsg} (${data.ticketId})`
-            : t.ticketSuccessMsg
-        );
+      let data: any = null;
+      try {
+        const text = await res.text();
+        data = JSON.parse(text);
+      } catch {
+        // Handled below if JSON parsing fails
+      }
+
+      if (res.ok && data?.success) {
+        setTicketSuccess(t.ticketSuccessMsg);
         setTicketSubject("");
         setTicketMessage("");
+        setTicketPhone("");
       } else {
-        setTicketError(data.error || "Failed to submit ticket. Please try again.");
+        setTicketError(data?.message || "Failed to submit ticket. Please check your connection and try again.");
       }
     } catch (err: any) {
-      setTicketError(err.message || "Network error. Please try again.");
+      setTicketError(err?.message || "Network error submitting ticket. Please try again.");
     } finally {
       setTicketSubmitting(false);
     }

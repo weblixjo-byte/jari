@@ -54,9 +54,15 @@ export async function POST(req: Request) {
       body: JSON.stringify(payload),
     });
 
-    const data = await web3Res.json();
+    let data: any = null;
+    try {
+      const text = await web3Res.text();
+      data = JSON.parse(text);
+    } catch {
+      // Non-JSON response (e.g. Cloudflare HTML block)
+    }
 
-    if (web3Res.ok && data.success) {
+    if (web3Res.ok && data?.success) {
       return NextResponse.json({
         success: true,
         message: "Support ticket submitted successfully.",
@@ -64,7 +70,7 @@ export async function POST(req: Request) {
       });
     } else {
       return NextResponse.json(
-        { error: data.message || "Failed to submit ticket via Web3Forms." },
+        { error: data?.message || "Web3Forms submission requires client-side submission." },
         { status: 502 }
       );
     }
