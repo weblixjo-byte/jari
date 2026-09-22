@@ -24,6 +24,10 @@ import {
   Upload,
   Camera,
   Smartphone,
+  LifeBuoy,
+  Bug,
+  Sparkles,
+  Check,
 } from "lucide-react";
 import { IReward, IUser, ITransaction } from "@/lib/types";
 import CustomGlassSelect from "@/components/CustomGlassSelect";
@@ -134,6 +138,19 @@ const i18n = {
         ? `Notification sent to ${recipientName}! ${bonusCount ? `+${bonus} bonus points credited.` : ""}${pushNote}`
         : `Broadcast sent successfully! ${bonusCount ? `+${bonus} points credited to ${bonusCount} members.` : ""}${pushNote}`;
     },
+    navSupport: "Support Ticket",
+    supportTitle: "Technical Support & Issue Tickets",
+    supportSubtitle: "Submit bugs, POS glitches, or technical requests directly to the engineering team.",
+    ticketCategory: "Issue Category",
+    ticketPriority: "Urgency Level",
+    ticketSubject: "Subject / Summary",
+    ticketMessage: "Detailed Description",
+    ticketEmail: "Your Contact Email",
+    ticketPhone: "Phone / WhatsApp (Optional)",
+    ticketSubmit: "Submit Support Ticket",
+    ticketSubmitting: "Dispatching Ticket...",
+    ticketSuccessTitle: "Ticket Dispatched Successfully!",
+    ticketSuccessMsg: "Your ticket has been sent to info@weblix-jo.com. Our engineering team will review and resolve it promptly.",
   },
   ar: {
     langToggle: "English",
@@ -239,6 +256,19 @@ const i18n = {
         ? `Notification sent to ${recipientName}! ${bonusCount ? `+${bonus} bonus points credited.` : ""}${pushNote}`
         : `Broadcast sent successfully! ${bonusCount ? `+${bonus} points credited to ${bonusCount} members.` : ""}${pushNote}`;
     },
+    navSupport: "تذكرة دعم فني",
+    supportTitle: "الدعم الفني وتذاكر النظام",
+    supportSubtitle: "أرسل أي مشكلة تقنية، خطأ بنقطة البيع أو استفسار وسيتولى فريق البرمجة معالجتها فوراً.",
+    ticketCategory: "نوع المشكلة",
+    ticketPriority: "درجة الأهمية",
+    ticketSubject: "عنوان المشكلة",
+    ticketMessage: "تفاصيل ووصف المشكلة",
+    ticketEmail: "بريدك الإلكتروني للمتابعة",
+    ticketPhone: "رقم الهاتف أو الواتساب (اختياري)",
+    ticketSubmit: "إرسال التذكرة الآن",
+    ticketSubmitting: "جاري إرسال التذكرة...",
+    ticketSuccessTitle: "تم إرسال التذكرة بنجاح!",
+    ticketSuccessMsg: "تم إرسال تذكرتك مباشرة إلى info@weblix-jo.com وسيقوم فريق التطوير بمراجعتها وحلها فوراً.",
   },
 };
 
@@ -271,7 +301,18 @@ export default function AdminPage() {
   const [loginLoading, setLoginLoading] = useState(false);
 
   // Active Tab
-  const [activeTab, setActiveTab] = useState<"analytics" | "customers" | "rewards" | "cashiers" | "broadcast">("analytics");
+  const [activeTab, setActiveTab] = useState<"analytics" | "customers" | "rewards" | "cashiers" | "broadcast" | "support">("analytics");
+
+  // Support Ticket Form State
+  const [ticketCategory, setTicketCategory] = useState("Bug / System Glitch");
+  const [ticketPriority, setTicketPriority] = useState<"Normal" | "High" | "Urgent">("Normal");
+  const [ticketSubject, setTicketSubject] = useState("");
+  const [ticketMessage, setTicketMessage] = useState("");
+  const [ticketEmail, setTicketEmail] = useState("");
+  const [ticketPhone, setTicketPhone] = useState("");
+  const [ticketSubmitting, setTicketSubmitting] = useState(false);
+  const [ticketSuccess, setTicketSuccess] = useState<string | null>(null);
+  const [ticketError, setTicketError] = useState<string | null>(null);
 
   // Customer Directory State
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
@@ -664,6 +705,63 @@ export default function AdminPage() {
     }
   };
 
+  // Dispatch Support Ticket to Web3Forms / info@weblix-jo.com
+  const handleSendTicket = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!ticketSubject.trim() || !ticketMessage.trim()) {
+      setTicketError("Please enter both a subject and a description for your ticket.");
+      return;
+    }
+
+    setTicketSubmitting(true);
+    setTicketError(null);
+    setTicketSuccess(null);
+
+    const diagnostics = {
+      store: config.storeName,
+      adminName: admin?.name || "Jari Admin",
+      adminEmail: admin?.email || "admin@jari.com",
+      browser: typeof navigator !== "undefined" ? navigator.userAgent : "Unknown",
+      screen: typeof window !== "undefined" ? `${window.innerWidth}x${window.innerHeight}` : "Unknown",
+      url: typeof window !== "undefined" ? window.location.href : "Unknown",
+      timestamp: new Date().toISOString(),
+    };
+
+    try {
+      const res = await fetch("/api/admin/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          subject: ticketSubject.trim(),
+          message: ticketMessage.trim(),
+          category: ticketCategory,
+          priority: ticketPriority,
+          contactEmail: ticketEmail.trim() || admin?.email || "info@weblix-jo.com",
+          contactPhone: ticketPhone.trim(),
+          senderName: admin?.name || "Jari Admin",
+          diagnostics,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setTicketSuccess(
+          data.ticketId
+            ? `${t.ticketSuccessMsg} (${data.ticketId})`
+            : t.ticketSuccessMsg
+        );
+        setTicketSubject("");
+        setTicketMessage("");
+      } else {
+        setTicketError(data.error || "Failed to submit ticket. Please try again.");
+      }
+    } catch (err: any) {
+      setTicketError(err.message || "Network error. Please try again.");
+    } finally {
+      setTicketSubmitting(false);
+    }
+  };
+
   if (loadingSession) {
     return (
       <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
@@ -810,6 +908,7 @@ export default function AdminPage() {
     { id: "rewards", label: t.navRewards, icon: Gift },
     { id: "cashiers", label: t.navCashiers, icon: ShieldCheck },
     { id: "broadcast", label: t.navBroadcast, icon: Send },
+    { id: "support", label: t.navSupport, icon: LifeBuoy },
   ] as const;
 
   // Super Admin Layout (100% English, Centered & Balanced Layout)
@@ -1668,6 +1767,277 @@ export default function AdminPage() {
                 </button>
               </div>
             </form>
+          </div>
+        )}
+
+        {/* TAB 6: TECHNICAL SUPPORT & ISSUE TICKETS */}
+        {activeTab === "support" && (
+          <div className="space-y-6 animate-in fade-in duration-200">
+            {/* Header & Direct Line Banner */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E6DEBA]/60">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-2xl bg-[#0A52A9] text-[#F4EECF] flex items-center justify-center shadow-xs shrink-0">
+                  <LifeBuoy className="w-6 h-6" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-[#0B192C] font-serif leading-tight">
+                    {t.supportTitle}
+                  </h2>
+                  <p className="text-xs text-neutral-500 mt-0.5">
+                    {t.supportSubtitle}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 self-start sm:self-auto">
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono font-medium shadow-2xs">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Direct Line: info@weblix-jo.com</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Success Message Card */}
+            {ticketSuccess && (
+              <div className="glass-panel rounded-3xl p-6 border-emerald-200 bg-emerald-50/70 text-emerald-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                    <CheckCircle2 className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-emerald-900 mb-0.5">
+                      {t.ticketSuccessTitle}
+                    </h4>
+                    <p className="text-xs text-emerald-800 leading-relaxed">
+                      {ticketSuccess}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setTicketSuccess(null);
+                    setTicketSubject("");
+                    setTicketMessage("");
+                  }}
+                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer transition-colors shrink-0"
+                >
+                  Send Another Ticket
+                </button>
+              </div>
+            )}
+
+            {/* Error Alert Card */}
+            {ticketError && (
+              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2.5">
+                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                <span>{ticketError}</span>
+              </div>
+            )}
+
+            {/* Ticket Form Card */}
+            <div className="glass-panel rounded-3xl p-5 sm:p-7 shadow-xs">
+              <form onSubmit={handleSendTicket} className="space-y-6">
+                {/* Section 1: Issue Category Selection */}
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-3 font-semibold">
+                    {t.ticketCategory}
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                    {[
+                      { id: "Bug / System Glitch", label: "Bug / Glitch", desc: "عطل أو خطأ بالنظام", icon: Bug },
+                      { id: "Cashier POS Terminal", label: "Cashier POS", desc: "شاشة الكاشير ونقاط البيع", icon: Coffee },
+                      { id: "Customer Pass & QR", label: "Customer Pass", desc: "بطاقة الزبون والرمز", icon: Smartphone },
+                      { id: "Rewards & Redemptions", label: "Rewards System", desc: "الجوائز والخصومات", icon: Gift },
+                      { id: "Accounts & Logins", label: "Staff Accounts", desc: "حسابات الموظفين", icon: ShieldCheck },
+                      { id: "Feature Request / Other", label: "Feature / Other", desc: "طلب ميزة أو استفسار", icon: Sparkles },
+                    ].map((cat) => {
+                      const Icon = cat.icon;
+                      const isSelected = ticketCategory === cat.id;
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => setTicketCategory(cat.id)}
+                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+                            isSelected
+                              ? "border-[#0A52A9] bg-[#FDFBF4] ring-2 ring-[#0A52A9]/20 shadow-xs"
+                              : "border-[#E6DEBA]/70 bg-white/70 hover:bg-[#FDFBF4]/60 hover:border-[#0A52A9]/40"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
+                              isSelected ? "bg-[#0A52A9] text-[#F4EECF]" : "bg-neutral-100 text-neutral-600"
+                            }`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
+                            {isSelected && (
+                              <span className="w-4 h-4 rounded-full bg-[#0A52A9] text-white flex items-center justify-center">
+                                <Check className="w-2.5 h-2.5" />
+                              </span>
+                            )}
+                          </div>
+                          <div>
+                            <span className="text-xs font-semibold text-[#0B192C] block leading-tight">
+                              {cat.label}
+                            </span>
+                            <span className="text-[10px] text-neutral-500 block mt-0.5">
+                              {cat.desc}
+                            </span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Section 2: Urgency / Priority Level */}
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2.5 font-semibold">
+                    {t.ticketPriority}
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    {[
+                      { id: "Normal", label: "Normal (عادي)", desc: "Routine question or minor matter", color: "blue" },
+                      { id: "High", label: "High (مرتفع)", desc: "Impacting store service speed", color: "amber" },
+                      { id: "Urgent", label: "Urgent (🚨 عاجل جداً)", desc: "Critical block or POS terminal down", color: "red" },
+                    ].map((p) => {
+                      const isSelected = ticketPriority === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setTicketPriority(p.id as any)}
+                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                            isSelected
+                              ? p.id === "Urgent"
+                                ? "border-red-500 bg-red-50/80 ring-2 ring-red-500/20 text-red-950 font-semibold"
+                                : p.id === "High"
+                                ? "border-amber-500 bg-amber-50/80 ring-2 ring-amber-500/20 text-amber-950 font-semibold"
+                                : "border-[#0A52A9] bg-[#FDFBF4] ring-2 ring-[#0A52A9]/20 text-[#0B192C] font-semibold"
+                              : "border-[#E6DEBA]/70 bg-white/70 hover:bg-neutral-50 text-neutral-600"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-xs font-bold leading-none">
+                              {p.label}
+                            </span>
+                            {p.id === "Urgent" && (
+                              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0" />
+                            )}
+                          </div>
+                          <span className="text-[10px] text-neutral-500 block leading-tight">
+                            {p.desc}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Section 3: Subject */}
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
+                    {t.ticketSubject}
+                  </label>
+                  <input
+                    type="text"
+                    value={ticketSubject}
+                    onChange={(e) => setTicketSubject(e.target.value)}
+                    placeholder="Brief summary of the issue or inquiry..."
+                    className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm font-medium text-neutral-900 placeholder:text-neutral-400 shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
+                    required
+                  />
+                </div>
+
+                {/* Section 4: Detailed Message */}
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
+                    {t.ticketMessage}
+                  </label>
+                  <textarea
+                    rows={5}
+                    value={ticketMessage}
+                    onChange={(e) => setTicketMessage(e.target.value)}
+                    placeholder="Explain what happened in detail: steps to reproduce, customer PIN or reward code (if relevant), error messages, or what you would like adjusted..."
+                    className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm text-neutral-900 placeholder:text-neutral-400 resize-none leading-relaxed min-h-[120px] shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
+                    required
+                  />
+                </div>
+
+                {/* Section 5: Contact Information Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
+                      {t.ticketEmail}
+                    </label>
+                    <input
+                      type="email"
+                      value={ticketEmail || (admin?.email || "")}
+                      onChange={(e) => setTicketEmail(e.target.value)}
+                      placeholder="info@weblix-jo.com"
+                      className="glass-input w-full px-4 py-3 rounded-2xl text-sm font-mono text-neutral-900 placeholder:text-neutral-400 shadow-xs"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
+                      {t.ticketPhone}
+                    </label>
+                    <input
+                      type="tel"
+                      value={ticketPhone}
+                      onChange={(e) => setTicketPhone(e.target.value)}
+                      placeholder="+962 7X XXX XXXX"
+                      className="glass-input w-full px-4 py-3 rounded-2xl text-sm font-mono text-neutral-900 placeholder:text-neutral-400 shadow-xs"
+                    />
+                  </div>
+                </div>
+
+                {/* Section 6: Diagnostics Auto-Attached Box */}
+                <div className="p-3.5 rounded-2xl bg-[#FDFBF4] border border-[#E6DEBA] text-[11px] text-neutral-600 space-y-1 font-mono">
+                  <div className="flex items-center gap-1.5 text-[#0A52A9] font-bold">
+                    <ShieldCheck className="w-3.5 h-3.5" />
+                    <span>Automated Environment Diagnostics Attached:</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-0.5 text-neutral-500 pt-0.5">
+                    <span>Store: <strong>{config.storeName}</strong></span>
+                    <span>Admin: <strong>{admin?.name} ({admin?.email})</strong></span>
+                    <span>Direct Recipient: <strong>info@weblix-jo.com</strong></span>
+                    <span>Secure Gateway: <strong>Web3Forms</strong></span>
+                  </div>
+                </div>
+
+                {/* Section 7: Submit Button */}
+                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <span className="text-xs text-neutral-500">
+                    Direct delivery to development team via Web3Forms.
+                  </span>
+                  <button
+                    type="submit"
+                    disabled={ticketSubmitting}
+                    className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md cursor-pointer active:scale-98"
+                  >
+                    {ticketSubmitting ? (
+                      <>
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-1" />
+                          <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-2" />
+                          <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-3" />
+                        </div>
+                        <span>{t.ticketSubmitting}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>{t.ticketSubmit}</span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         )}
       </main>
