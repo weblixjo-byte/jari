@@ -15,17 +15,14 @@ export async function POST(req: Request) {
     const {
       subject,
       message,
-      category = "System Bug / Error",
-      priority = "Normal",
-      contactEmail,
+      category = "Bug / System Glitch",
       contactPhone,
       senderName,
-      diagnostics = {},
     } = body;
 
     if (!subject || !message) {
       return NextResponse.json(
-        { error: "Subject and message description are required." },
+        { error: "Subject and description are required." },
         { status: 400 }
       );
     }
@@ -35,26 +32,15 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ||
       "7f0e27f4-7df7-4105-af7a-985d05cc02d1";
 
-    const urgencyTag =
-      priority === "Urgent"
-        ? "🚨 [CRITICAL/URGENT]"
-        : priority === "High"
-        ? "⚠️ [HIGH PRIORITY]"
-        : "ℹ️ [NORMAL]";
-
     const payload = {
       access_key: accessKey,
-      subject: `${urgencyTag} [Jari Loyalty] ${category}: ${subject}`,
-      from_name: `${senderName || session.username || "Admin"} (Jari Store Admin)`,
-      email: contactEmail || "info@weblix-jo.com",
-      "Ticket Category": category,
-      "Urgency Level": priority,
-      "Reported By": `${senderName || session.username || "Admin"} (User ID: ${session.userId || "N/A"})`,
-      "Contact Email": contactEmail || "info@weblix-jo.com",
-      "Contact Phone": contactPhone || "Not specified",
-      "Issue Title": subject,
-      "Issue Details": message,
-      "Client Diagnostics": JSON.stringify(diagnostics, null, 2),
+      subject: `[Support Ticket] ${category}: ${subject}`,
+      from_name: `${senderName || session.username || "Admin"} (Store Admin)`,
+      email: "info@weblix-jo.com",
+      "Issue Category": category,
+      "Subject": subject,
+      "Description": message,
+      "Contact Phone / WhatsApp": contactPhone || "None provided",
       "Submitted At": new Date().toLocaleString("en-US", { timeZone: "Asia/Amman" }) + " (Amman Time)",
       botcheck: "",
     };
@@ -73,7 +59,7 @@ export async function POST(req: Request) {
     if (web3Res.ok && data.success) {
       return NextResponse.json({
         success: true,
-        message: "Support ticket dispatched successfully to our engineering team.",
+        message: "Support ticket submitted successfully.",
         ticketId: "TKT-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
       });
     } else {

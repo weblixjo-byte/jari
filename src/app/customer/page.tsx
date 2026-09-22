@@ -1312,7 +1312,7 @@ export default function CustomerPage() {
                     <span className="w-3.5 h-3.5 rounded-full bg-[#0A52A9] animate-dot-3 shadow-[0_2px_8px_rgba(10,82,169,0.35)]" />
                   </div>
                   <span className="text-xs font-semibold text-[#0A52A9] tracking-wide font-sans">
-                    جاري تحميل الجوائز...
+                    Loading rewards catalogue...
                   </span>
                 </div>
               </div>

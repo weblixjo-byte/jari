@@ -142,10 +142,8 @@ const i18n = {
     supportTitle: "Technical Support & Issue Tickets",
     supportSubtitle: "Submit bugs, POS glitches, or technical requests directly to the engineering team.",
     ticketCategory: "Issue Category",
-    ticketPriority: "Urgency Level",
     ticketSubject: "Subject / Summary",
     ticketMessage: "Detailed Description",
-    ticketEmail: "Your Contact Email",
     ticketPhone: "Phone / WhatsApp (Optional)",
     ticketSubmit: "Submit Support Ticket",
     ticketSubmitting: "Dispatching Ticket...",
@@ -256,19 +254,17 @@ const i18n = {
         ? `Notification sent to ${recipientName}! ${bonusCount ? `+${bonus} bonus points credited.` : ""}${pushNote}`
         : `Broadcast sent successfully! ${bonusCount ? `+${bonus} points credited to ${bonusCount} members.` : ""}${pushNote}`;
     },
-    navSupport: "تذكرة دعم فني",
-    supportTitle: "الدعم الفني وتذاكر النظام",
-    supportSubtitle: "أرسل أي مشكلة تقنية، خطأ بنقطة البيع أو استفسار وسيتولى فريق البرمجة معالجتها فوراً.",
-    ticketCategory: "نوع المشكلة",
-    ticketPriority: "درجة الأهمية",
-    ticketSubject: "عنوان المشكلة",
-    ticketMessage: "تفاصيل ووصف المشكلة",
-    ticketEmail: "بريدك الإلكتروني للمتابعة",
-    ticketPhone: "رقم الهاتف أو الواتساب (اختياري)",
-    ticketSubmit: "إرسال التذكرة الآن",
-    ticketSubmitting: "جاري إرسال التذكرة...",
-    ticketSuccessTitle: "تم إرسال التذكرة بنجاح!",
-    ticketSuccessMsg: "تم إرسال تذكرتك مباشرة إلى info@weblix-jo.com وسيقوم فريق التطوير بمراجعتها وحلها فوراً.",
+    navSupport: "Support Ticket",
+    supportTitle: "Technical Support & Issue Tickets",
+    supportSubtitle: "Submit bugs, POS glitches, or technical requests directly to the engineering team.",
+    ticketCategory: "Issue Category",
+    ticketSubject: "Subject / Summary",
+    ticketMessage: "Detailed Description",
+    ticketPhone: "Phone / WhatsApp (Optional)",
+    ticketSubmit: "Submit Support Ticket",
+    ticketSubmitting: "Dispatching Ticket...",
+    ticketSuccessTitle: "Ticket Dispatched Successfully!",
+    ticketSuccessMsg: "Your ticket has been sent to info@weblix-jo.com. Our engineering team will review and resolve it promptly.",
   },
 };
 
@@ -305,10 +301,8 @@ export default function AdminPage() {
 
   // Support Ticket Form State
   const [ticketCategory, setTicketCategory] = useState("Bug / System Glitch");
-  const [ticketPriority, setTicketPriority] = useState<"Normal" | "High" | "Urgent">("Normal");
   const [ticketSubject, setTicketSubject] = useState("");
   const [ticketMessage, setTicketMessage] = useState("");
-  const [ticketEmail, setTicketEmail] = useState("");
   const [ticketPhone, setTicketPhone] = useState("");
   const [ticketSubmitting, setTicketSubmitting] = useState(false);
   const [ticketSuccess, setTicketSuccess] = useState<string | null>(null);
@@ -717,16 +711,6 @@ export default function AdminPage() {
     setTicketError(null);
     setTicketSuccess(null);
 
-    const diagnostics = {
-      store: config.storeName,
-      adminName: admin?.name || "Jari Admin",
-      adminEmail: admin?.email || "admin@jari.com",
-      browser: typeof navigator !== "undefined" ? navigator.userAgent : "Unknown",
-      screen: typeof window !== "undefined" ? `${window.innerWidth}x${window.innerHeight}` : "Unknown",
-      url: typeof window !== "undefined" ? window.location.href : "Unknown",
-      timestamp: new Date().toISOString(),
-    };
-
     try {
       const res = await fetch("/api/admin/support", {
         method: "POST",
@@ -735,11 +719,8 @@ export default function AdminPage() {
           subject: ticketSubject.trim(),
           message: ticketMessage.trim(),
           category: ticketCategory,
-          priority: ticketPriority,
-          contactEmail: ticketEmail.trim() || admin?.email || "info@weblix-jo.com",
           contactPhone: ticketPhone.trim(),
           senderName: admin?.name || "Jari Admin",
-          diagnostics,
         }),
       });
 
@@ -1838,104 +1819,27 @@ export default function AdminPage() {
             {/* Ticket Form Card */}
             <div className="glass-panel rounded-3xl p-5 sm:p-7 shadow-xs">
               <form onSubmit={handleSendTicket} className="space-y-6">
-                {/* Section 1: Issue Category Selection */}
+                {/* Section 1: Issue Category (Dropdown Select) */}
                 <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-3 font-semibold">
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
                     {t.ticketCategory}
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                    {[
-                      { id: "Bug / System Glitch", label: "Bug / Glitch", desc: "عطل أو خطأ بالنظام", icon: Bug },
-                      { id: "Cashier POS Terminal", label: "Cashier POS", desc: "شاشة الكاشير ونقاط البيع", icon: Coffee },
-                      { id: "Customer Pass & QR", label: "Customer Pass", desc: "بطاقة الزبون والرمز", icon: Smartphone },
-                      { id: "Rewards & Redemptions", label: "Rewards System", desc: "الجوائز والخصومات", icon: Gift },
-                      { id: "Accounts & Logins", label: "Staff Accounts", desc: "حسابات الموظفين", icon: ShieldCheck },
-                      { id: "Feature Request / Other", label: "Feature / Other", desc: "طلب ميزة أو استفسار", icon: Sparkles },
-                    ].map((cat) => {
-                      const Icon = cat.icon;
-                      const isSelected = ticketCategory === cat.id;
-                      return (
-                        <button
-                          key={cat.id}
-                          type="button"
-                          onClick={() => setTicketCategory(cat.id)}
-                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
-                            isSelected
-                              ? "border-[#0A52A9] bg-[#FDFBF4] ring-2 ring-[#0A52A9]/20 shadow-xs"
-                              : "border-[#E6DEBA]/70 bg-white/70 hover:bg-[#FDFBF4]/60 hover:border-[#0A52A9]/40"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${
-                              isSelected ? "bg-[#0A52A9] text-[#F4EECF]" : "bg-neutral-100 text-neutral-600"
-                            }`}>
-                              <Icon className="w-4 h-4" />
-                            </div>
-                            {isSelected && (
-                              <span className="w-4 h-4 rounded-full bg-[#0A52A9] text-white flex items-center justify-center">
-                                <Check className="w-2.5 h-2.5" />
-                              </span>
-                            )}
-                          </div>
-                          <div>
-                            <span className="text-xs font-semibold text-[#0B192C] block leading-tight">
-                              {cat.label}
-                            </span>
-                            <span className="text-[10px] text-neutral-500 block mt-0.5">
-                              {cat.desc}
-                            </span>
-                          </div>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <CustomGlassSelect
+                    value={ticketCategory}
+                    onChange={setTicketCategory}
+                    placeholder="-- Select Issue Category --"
+                    options={[
+                      { value: "Bug / System Glitch", label: "Bug / System Glitch", subtitle: "Software errors, crashes, or glitches" },
+                      { value: "Cashier POS Terminal", label: "Cashier POS Terminal", subtitle: "PIN/QR lookup, balance credit, or checkout" },
+                      { value: "Customer Pass & QR", label: "Customer Pass & QR", subtitle: "Customer code, PIN issues, or web app pass" },
+                      { value: "Rewards & Redemptions", label: "Rewards & Redemptions", subtitle: "Reward claim codes, points deductions, or catalogue" },
+                      { value: "Staff Accounts & Logins", label: "Staff Accounts & Logins", subtitle: "Admin or cashier access credentials" },
+                      { value: "Feature Request / Other", label: "Feature Request / Other", subtitle: "System adjustments, suggestions, or inquiries" },
+                    ]}
+                  />
                 </div>
 
-                {/* Section 2: Urgency / Priority Level */}
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2.5 font-semibold">
-                    {t.ticketPriority}
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    {[
-                      { id: "Normal", label: "Normal (عادي)", desc: "Routine question or minor matter", color: "blue" },
-                      { id: "High", label: "High (مرتفع)", desc: "Impacting store service speed", color: "amber" },
-                      { id: "Urgent", label: "Urgent (🚨 عاجل جداً)", desc: "Critical block or POS terminal down", color: "red" },
-                    ].map((p) => {
-                      const isSelected = ticketPriority === p.id;
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => setTicketPriority(p.id as any)}
-                          className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
-                            isSelected
-                              ? p.id === "Urgent"
-                                ? "border-red-500 bg-red-50/80 ring-2 ring-red-500/20 text-red-950 font-semibold"
-                                : p.id === "High"
-                                ? "border-amber-500 bg-amber-50/80 ring-2 ring-amber-500/20 text-amber-950 font-semibold"
-                                : "border-[#0A52A9] bg-[#FDFBF4] ring-2 ring-[#0A52A9]/20 text-[#0B192C] font-semibold"
-                              : "border-[#E6DEBA]/70 bg-white/70 hover:bg-neutral-50 text-neutral-600"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-bold leading-none">
-                              {p.label}
-                            </span>
-                            {p.id === "Urgent" && (
-                              <span className="w-2 h-2 rounded-full bg-red-500 animate-ping shrink-0" />
-                            )}
-                          </div>
-                          <span className="text-[10px] text-neutral-500 block leading-tight">
-                            {p.desc}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Section 3: Subject */}
+                {/* Section 2: Subject */}
                 <div>
                   <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
                     {t.ticketSubject}
@@ -1950,7 +1854,7 @@ export default function AdminPage() {
                   />
                 </div>
 
-                {/* Section 4: Detailed Message */}
+                {/* Section 3: Detailed Description */}
                 <div>
                   <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
                     {t.ticketMessage}
@@ -1959,60 +1863,30 @@ export default function AdminPage() {
                     rows={5}
                     value={ticketMessage}
                     onChange={(e) => setTicketMessage(e.target.value)}
-                    placeholder="Explain what happened in detail: steps to reproduce, customer PIN or reward code (if relevant), error messages, or what you would like adjusted..."
+                    placeholder="Explain what happened in detail: steps to reproduce, customer PIN or reward code (if relevant), error messages, or what needs fixing..."
                     className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm text-neutral-900 placeholder:text-neutral-400 resize-none leading-relaxed min-h-[120px] shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
                     required
                   />
                 </div>
 
-                {/* Section 5: Contact Information Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
-                      {t.ticketEmail}
-                    </label>
-                    <input
-                      type="email"
-                      value={ticketEmail || (admin?.email || "")}
-                      onChange={(e) => setTicketEmail(e.target.value)}
-                      placeholder="info@weblix-jo.com"
-                      className="glass-input w-full px-4 py-3 rounded-2xl text-sm font-mono text-neutral-900 placeholder:text-neutral-400 shadow-xs"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
-                      {t.ticketPhone}
-                    </label>
-                    <input
-                      type="tel"
-                      value={ticketPhone}
-                      onChange={(e) => setTicketPhone(e.target.value)}
-                      placeholder="+962 7X XXX XXXX"
-                      className="glass-input w-full px-4 py-3 rounded-2xl text-sm font-mono text-neutral-900 placeholder:text-neutral-400 shadow-xs"
-                    />
-                  </div>
+                {/* Section 4: Contact Phone (Optional) */}
+                <div>
+                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
+                    {t.ticketPhone}
+                  </label>
+                  <input
+                    type="tel"
+                    value={ticketPhone}
+                    onChange={(e) => setTicketPhone(e.target.value)}
+                    placeholder="+962 7X XXX XXXX"
+                    className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm font-mono text-neutral-900 placeholder:text-neutral-400 shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
+                  />
                 </div>
 
-                {/* Section 6: Diagnostics Auto-Attached Box */}
-                <div className="p-3.5 rounded-2xl bg-[#FDFBF4] border border-[#E6DEBA] text-[11px] text-neutral-600 space-y-1 font-mono">
-                  <div className="flex items-center gap-1.5 text-[#0A52A9] font-bold">
-                    <ShieldCheck className="w-3.5 h-3.5" />
-                    <span>Automated Environment Diagnostics Attached:</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-0.5 text-neutral-500 pt-0.5">
-                    <span>Store: <strong>{config.storeName}</strong></span>
-                    <span>Admin: <strong>{admin?.name} ({admin?.email})</strong></span>
-                    <span>Direct Recipient: <strong>info@weblix-jo.com</strong></span>
-                    <span>Secure Gateway: <strong>Web3Forms</strong></span>
-                  </div>
-                </div>
-
-                {/* Section 7: Submit Button */}
+                {/* Section 5: Submit Button */}
                 <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
                   <span className="text-xs text-neutral-500">
-                    Direct delivery to development team via Web3Forms.
+                    Dispatched directly to engineering team via Web3Forms.
                   </span>
                   <button
                     type="submit"
