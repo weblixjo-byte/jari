@@ -21,6 +21,10 @@ const RewardSchema = new Schema<RewardDocument>(
   { timestamps: true }
 );
 
+// Optimize query performance with compound indexes
+RewardSchema.index({ isActive: 1, pointsRequired: 1 });
+RewardSchema.index({ claimCode: 1 });
+
 // Clear model cache in dev/reload to ensure updated schema is applied
 if (mongoose.models && mongoose.models.Reward) {
   delete mongoose.models.Reward;

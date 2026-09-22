@@ -120,6 +120,15 @@ async function initMongoData() {
   }
 }
 
+// Sub-millisecond In-Memory Cache for Rewards
+let activeRewardsCache: { data: IReward[]; expiresAt: number } | null = null;
+let allRewardsCache: { data: IReward[]; expiresAt: number } | null = null;
+
+export const invalidateRewardsCache = () => {
+  activeRewardsCache = null;
+  allRewardsCache = null;
+};
+
 // Unified Data Access Layer (DAL) seamlessly delegating to Mongoose or Memory Store
 export const dbService = {
   // Store Config
@@ -476,8 +485,14 @@ export const dbService = {
       .slice(0, limit);
   },
 
-  // Rewards
+  // Rewards with sub-millisecond memory caching
   async getRewards(activeOnly: boolean = true): Promise<IReward[]> {
+    const now = Date.now();
+    const cache = activeOnly ? activeRewardsCache : allRewardsCache;
+    if (cache && cache.expiresAt > now) {
+      return cache.data;
+    }
+
     const getFallbackCode = (idx: number) => {
       return String(((idx * 7 + 11) % 90) + 10);
     };
@@ -487,15 +502,20 @@ export const dbService = {
       try {
         const filter = activeOnly ? { isActive: true } : {};
         const list = await Reward.find(filter).sort({ pointsRequired: 1 }).lean();
-        const mapped = list.map((r: any, idx: number) => {
-          if (!r.claimCode) {
-            r.claimCode = getFallbackCode(idx);
-          }
-          return r;
-        });
+        const mapped = list.map((r: any, idx: number) => ({
+          ...r,
+          _id: r._id?.toString() || r._id,
+          claimCode: r.claimCode || getFallbackCode(idx),
+        }));
         // Strict ascending sort by pointsRequired
-        mapped.sort((a: any, b: any) => a.pointsRequired - b.pointsRequired);
-        return JSON.parse(JSON.stringify(mapped));
+        mapped.sort((a: any, b: any) => (a.pointsRequired || 0) - (b.pointsRequired || 0));
+
+        if (activeOnly) {
+          activeRewardsCache = { data: mapped, expiresAt: now + 30000 };
+        } else {
+          allRewardsCache = { data: mapped, expiresAt: now + 30000 };
+        }
+        return mapped;
       } catch (e) {
         console.warn(e);
       }
@@ -586,6 +606,7 @@ export const dbService = {
           claimCode: finalCode,
           redemptionCount: 0,
         });
+        invalidateRewardsCache();
         return JSON.parse(JSON.stringify(r.toObject()));
       } catch (e: any) {
         console.error("Mongoose createReward error:", e);
@@ -623,6 +644,7 @@ export const dbService = {
       createdAt: new Date().toISOString(),
     };
     memoryStore.rewards.push(newReward);
+    invalidateRewardsCache();
     return { ...newReward };
   },
 
@@ -631,7 +653,10 @@ export const dbService = {
     if (isMongoose) {
       try {
         const r = await Reward.findByIdAndUpdate(id, { $set: data }, { new: true }).lean();
-        if (r) return JSON.parse(JSON.stringify(r));
+        if (r) {
+          invalidateRewardsCache();
+          return JSON.parse(JSON.stringify(r));
+        }
       } catch (e) {
         console.warn(e);
       }
@@ -639,6 +664,7 @@ export const dbService = {
     const idx = memoryStore.rewards.findIndex((r) => r._id === id);
     if (idx !== -1) {
       memoryStore.rewards[idx] = { ...memoryStore.rewards[idx], ...data };
+      invalidateRewardsCache();
       return { ...memoryStore.rewards[idx] };
     }
     return null;
@@ -649,6 +675,7 @@ export const dbService = {
     if (isMongoose) {
       try {
         await Reward.findByIdAndDelete(id);
+        invalidateRewardsCache();
         return true;
       } catch (e) {
         console.warn(e);
@@ -657,6 +684,7 @@ export const dbService = {
     const idx = memoryStore.rewards.findIndex((r) => r._id === id);
     if (idx !== -1) {
       memoryStore.rewards.splice(idx, 1);
+      invalidateRewardsCache();
       return true;
     }
     return false;

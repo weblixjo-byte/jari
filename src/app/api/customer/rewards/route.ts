@@ -5,25 +5,35 @@ import { dbService } from "@/lib/db";
 export async function GET() {
   try {
     const session = await getSession();
-    const rewards = await dbService.getRewards(true);
-    let userPoints = 0;
+    
+    // Parallelize rewards retrieval and user lookup for minimum latency
+    const [rewards, user] = await Promise.all([
+      dbService.getRewards(true),
+      session && session.role === "customer"
+        ? dbService.findUserById(session.userId)
+        : Promise.resolve(null),
+    ]);
 
-    if (session && session.role === "customer") {
-      const user = await dbService.findUserById(session.userId);
-      if (user) userPoints = user.pointsBalance;
-    }
+    const userPoints = user ? user.pointsBalance : 0;
 
     // Ensure strict ascending sort by pointsRequired (lowest to highest)
     const sorted = [...rewards].sort((a, b) => a.pointsRequired - b.pointsRequired);
 
-    return NextResponse.json({
-      success: true,
-      rewards: sorted.map((r) => ({
-        ...r,
-        canRedeem: userPoints >= r.pointsRequired,
-      })),
-      userPoints,
-    });
+    return NextResponse.json(
+      {
+        success: true,
+        rewards: sorted.map((r) => ({
+          ...r,
+          canRedeem: userPoints >= r.pointsRequired,
+        })),
+        userPoints,
+      },
+      {
+        headers: {
+          "Cache-Control": "private, max-age=10, stale-while-revalidate=60",
+        },
+      }
+    );
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

@@ -151,3 +151,31 @@ h1, h2, h3, h4, h5, h6, .font-serif, .font-brand, .font-subbrand {
 ::-webkit-scrollbar-thumb:hover {
   background: #0A52A9;
 }
+
+/* Smooth Brand 3-Dots Animated Wave Loader */
+@keyframes smoothDotWave {
+  0%, 100% {
+    transform: translateY(0) scale(0.82);
+    opacity: 0.35;
+  }
+  50% {
+    transform: translateY(-7px) scale(1.18);
+    opacity: 1;
+  }
+}
+
+.animate-dot-1 {
+  animation: smoothDotWave 1.25s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation-delay: 0s;
+}
+
+.animate-dot-2 {
+  animation: smoothDotWave 1.25s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation-delay: 0.2s;
+}
+
+.animate-dot-3 {
+  animation: smoothDotWave 1.25s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+  animation-delay: 0.4s;
+}
+

@@ -102,6 +102,7 @@ const CUSTOMER_CACHE_KEY = "jari_customer_cached";
 const CUSTOMER_ID_KEY = "jari_customer_id";
 const CUSTOMER_TOKEN_KEY = "jari_customer_token";
 const TRANSACTIONS_CACHE_KEY = "jari_transactions_cached";
+const REWARDS_CACHE_KEY = "jari_rewards_cached";
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -146,7 +147,30 @@ export default function CustomerPage() {
     }
     return [];
   });
-  const [rewards, setRewards] = useState<RewardItem[]>([]);
+  const [rewards, setRewards] = useState<RewardItem[]>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(REWARDS_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        }
+      } catch {}
+    }
+    return [];
+  });
+  const [rewardsLoading, setRewardsLoading] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem(REWARDS_CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) return false;
+        }
+      } catch {}
+    }
+    return true;
+  });
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [serverUnreadCount, setServerUnreadCount] = useState<number>(0);
   const [activeTab, setActiveTab] = useState<"card" | "rewards" | "history" | "notifications">("card");
@@ -249,7 +273,7 @@ export default function CustomerPage() {
     }
   };
 
-  // Fetch Rewards (Strictly sorted ascending by points cost)
+  // Fetch Rewards (Strictly sorted ascending by points cost with instant cache persistence)
   const loadRewards = async () => {
     try {
       const headers = getAuthHeaders();
@@ -260,9 +284,16 @@ export default function CustomerPage() {
           (a: any, b: any) => (a.pointsRequired || 0) - (b.pointsRequired || 0)
         );
         setRewards(sorted);
+        if (typeof window !== "undefined") {
+          try {
+            localStorage.setItem(REWARDS_CACHE_KEY, JSON.stringify(sorted));
+          } catch {}
+        }
       }
     } catch (e) {
       console.error(e);
+    } finally {
+      setRewardsLoading(false);
     }
   };
 
@@ -802,10 +833,17 @@ export default function CustomerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-neutral-300 border-t-[#0A52A9] animate-spin" />
-          <span className="text-xs font-mono text-neutral-500">Loading your loyalty pass...</span>
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-6">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-16 h-16 rounded-3xl bg-[#0A52A9] flex items-center justify-center text-white shadow-md overflow-hidden p-0.5 border border-[#0A52A9]/20">
+            <img src="/logo.png" alt="jari" className="w-full h-full object-cover rounded-2xl" />
+          </div>
+          <div className="flex items-center justify-center gap-2.5 py-1">
+            <span className="w-3.5 h-3.5 rounded-full bg-[#0A52A9] animate-dot-1 shadow-[0_2px_8px_rgba(10,82,169,0.35)]" />
+            <span className="w-3.5 h-3.5 rounded-full bg-[#0A52A9] animate-dot-2 shadow-[0_2px_8px_rgba(10,82,169,0.35)]" />
+            <span className="w-3.5 h-3.5 rounded-full bg-[#0A52A9] animate-dot-3 shadow-[0_2px_8px_rgba(10,82,169,0.35)]" />
+          </div>
+          <span className="text-xs font-mono text-neutral-400">Loading loyalty pass...</span>
         </div>
       </div>
     );
@@ -1203,9 +1241,17 @@ export default function CustomerPage() {
                   <span className="text-[11px] uppercase tracking-wider font-mono text-neutral-400 block mb-0.5">
                     Rewards Status
                   </span>
-                  <span className="inline-block px-2.5 py-1 rounded-lg bg-[#FDFBF4] border border-[#E6DEBA] text-xs font-semibold text-[#0A52A9]">
-                    {rewards.filter((r) => r.canRedeem).length} Unlocked
-                  </span>
+                  {rewardsLoading && rewards.length === 0 ? (
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FDFBF4] border border-[#E6DEBA]">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#0A52A9] animate-dot-1" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#0A52A9] animate-dot-2" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#0A52A9] animate-dot-3" />
+                    </span>
+                  ) : (
+                    <span className="inline-block px-2.5 py-1 rounded-lg bg-[#FDFBF4] border border-[#E6DEBA] text-xs font-semibold text-[#0A52A9]">
+                      {rewards.filter((r) => r.canRedeem).length} Unlocked
+                    </span>
+                  )}
                 </div>
               </div>
             </div>
@@ -1224,7 +1270,9 @@ export default function CustomerPage() {
                     Redeem Coffee & Treats
                   </span>
                   <span className="text-xs text-neutral-500">
-                    {rewards.filter((r) => r.canRedeem).length} rewards currently available with your balance
+                    {rewardsLoading && rewards.length === 0
+                      ? "Loading available rewards..."
+                      : `${rewards.filter((r) => r.canRedeem).length} rewards currently available with your balance`}
                   </span>
                 </div>
               </div>
@@ -1254,99 +1302,121 @@ export default function CustomerPage() {
               </div>
             </div>
 
-            {/* Rewards Cards Stack - Strictly sorted ascending by points required */}
-            <div className="space-y-4">
-              {[...rewards]
-                .sort((a, b) => (a.pointsRequired || 0) - (b.pointsRequired || 0))
-                .map((reward) => {
-                const canAfford = customer.pointsBalance >= reward.pointsRequired;
-                const progressPercent = Math.min(
-                  100,
-                  Math.round((customer.pointsBalance / reward.pointsRequired) * 100)
-                );
-                return (
-                  <div
-                    key={reward._id}
-                    className="bg-white border border-[#E6DEBA] rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all group"
-                  >
-                    {/* Top Hero Image Banner */}
-                    <div className="relative h-48 sm:h-52 w-full bg-[#FDFBF4] overflow-hidden">
-                      {reward.imageUrl ? (
-                        <img
-                          src={reward.imageUrl}
-                          alt={reward.title}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#0A52A9]/40 bg-[#FDFBF4]">
-                          <Gift className="w-12 h-12" />
-                        </div>
-                      )}
-
-                      {/* Points Badge */}
-                      <div className="absolute top-3.5 end-3.5 w-14 h-14 rounded-full bg-[#0A52A9] text-[#F4EECF] border-2 border-white shadow-lg flex flex-col items-center justify-center">
-                        <span className="text-base font-extrabold font-mono leading-none">
-                          {reward.pointsRequired}
-                        </span>
-                        <span className="text-[9px] font-semibold leading-none mt-0.5 opacity-90">
-                          pts
-                        </span>
-                      </div>
-
-                      {/* Category Tag */}
-                      <div className="absolute top-3.5 start-3.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/95 backdrop-blur-xs text-[#0A52A9] shadow-xs border border-white/80">
-                        {reward.category === "Drinks"
-                          ? "Beverages"
-                          : reward.category === "Food"
-                          ? "Food & Pastries"
-                          : reward.category === "Beans"
-                          ? "Specialty Beans"
-                          : reward.category === "Merchandise"
-                          ? "Merchandise"
-                          : reward.category}
-                      </div>
-                    </div>
-
-                    {/* Content Section */}
-                    <div className="p-4 sm:p-5">
-                      <h4 className="text-base font-bold text-[#0B192C] mb-1 leading-snug">
-                        {reward.title}
-                      </h4>
-                      <p className="text-xs text-neutral-500 mb-4 line-clamp-2 leading-relaxed">
-                        {reward.description}
-                      </p>
-
-                      <div className="pt-2 border-t border-[#E6DEBA]/60">
-                        {canAfford ? (
-                          <button
-                            onClick={() => {
-                              setRedeemingReward(reward);
-                            }}
-                            className="w-full py-2.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-                          >
-                            <Gift className="w-4 h-4" />
-                            <span>Redeem Reward Now</span>
-                          </button>
+            {/* Loading State: 3 Smooth Animated Brand Dots */}
+            {rewardsLoading && rewards.length === 0 ? (
+              <div className="py-20 px-4 flex flex-col items-center justify-center">
+                <div className="p-8 rounded-3xl bg-white/85 backdrop-blur-md border border-[#E6DEBA]/70 shadow-xs flex flex-col items-center gap-4 max-w-xs w-full text-center">
+                  <div className="flex items-center justify-center gap-3 py-2">
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#0A52A9] animate-dot-1 shadow-[0_2px_8px_rgba(10,82,169,0.35)]" />
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#0A52A9] animate-dot-2 shadow-[0_2px_8px_rgba(10,82,169,0.35)]" />
+                    <span className="w-3.5 h-3.5 rounded-full bg-[#0A52A9] animate-dot-3 shadow-[0_2px_8px_rgba(10,82,169,0.35)]" />
+                  </div>
+                  <span className="text-xs font-semibold text-[#0A52A9] tracking-wide font-sans">
+                    جاري تحميل الجوائز...
+                  </span>
+                </div>
+              </div>
+            ) : rewards.length === 0 ? (
+              <div className="text-center py-16 bg-white border border-[#E6DEBA] rounded-3xl p-6 shadow-xs">
+                <Gift className="w-12 h-12 text-[#0A52A9]/40 mx-auto mb-3" />
+                <h4 className="text-sm font-bold text-[#0B192C] mb-1">No Rewards Available</h4>
+                <p className="text-xs text-neutral-500">Check back soon for exclusive loyalty offers.</p>
+              </div>
+            ) : (
+              /* Rewards Cards Stack - Strictly sorted ascending by points required */
+              <div className="space-y-4">
+                {[...rewards]
+                  .sort((a, b) => (a.pointsRequired || 0) - (b.pointsRequired || 0))
+                  .map((reward) => {
+                  const canAfford = customer.pointsBalance >= reward.pointsRequired;
+                  const progressPercent = Math.min(
+                    100,
+                    Math.round((customer.pointsBalance / reward.pointsRequired) * 100)
+                  );
+                  return (
+                    <div
+                      key={reward._id}
+                      className="bg-white border border-[#E6DEBA] rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all group"
+                    >
+                      {/* Top Hero Image Banner */}
+                      <div className="relative h-48 sm:h-52 w-full bg-[#FDFBF4] overflow-hidden">
+                        {reward.imageUrl ? (
+                          <img
+                            src={reward.imageUrl}
+                            alt={reward.title}
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
                         ) : (
-                          <div className="space-y-1.5 py-1">
-                            <div className="flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                              <span>{reward.pointsRequired - customer.pointsBalance} pts needed to unlock</span>
-                              <span className="font-semibold text-[#0A52A9]">{progressPercent}%</span>
-                            </div>
-                            <div className="w-full h-2 bg-[#F8FAFC] border border-[#E6DEBA] rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-gradient-to-r from-[#1A69CC] to-[#0A52A9] rounded-full transition-all duration-500"
-                                style={{ width: `${progressPercent}%` }}
-                              />
-                            </div>
+                          <div className="w-full h-full flex items-center justify-center text-[#0A52A9]/40 bg-[#FDFBF4]">
+                            <Gift className="w-12 h-12" />
                           </div>
                         )}
+
+                        {/* Points Badge */}
+                        <div className="absolute top-3.5 end-3.5 w-14 h-14 rounded-full bg-[#0A52A9] text-[#F4EECF] border-2 border-white shadow-lg flex flex-col items-center justify-center">
+                          <span className="text-base font-extrabold font-mono leading-none">
+                            {reward.pointsRequired}
+                          </span>
+                          <span className="text-[9px] font-semibold leading-none mt-0.5 opacity-90">
+                            pts
+                          </span>
+                        </div>
+
+                        {/* Category Tag */}
+                        <div className="absolute top-3.5 start-3.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/95 backdrop-blur-xs text-[#0A52A9] shadow-xs border border-white/80">
+                          {reward.category === "Drinks"
+                            ? "Beverages"
+                            : reward.category === "Food"
+                            ? "Food & Pastries"
+                            : reward.category === "Beans"
+                            ? "Specialty Beans"
+                            : reward.category === "Merchandise"
+                            ? "Merchandise"
+                            : reward.category}
+                        </div>
+                      </div>
+
+                      {/* Content Section */}
+                      <div className="p-4 sm:p-5">
+                        <h4 className="text-base font-bold text-[#0B192C] mb-1 leading-snug">
+                          {reward.title}
+                        </h4>
+                        <p className="text-xs text-neutral-500 mb-4 line-clamp-2 leading-relaxed">
+                          {reward.description}
+                        </p>
+
+                        <div className="pt-2 border-t border-[#E6DEBA]/60">
+                          {canAfford ? (
+                            <button
+                              onClick={() => {
+                                setRedeemingReward(reward);
+                              }}
+                              className="w-full py-2.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                            >
+                              <Gift className="w-4 h-4" />
+                              <span>Redeem Reward Now</span>
+                            </button>
+                          ) : (
+                            <div className="space-y-1.5 py-1">
+                              <div className="flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                                <span>{reward.pointsRequired - customer.pointsBalance} pts needed to unlock</span>
+                                <span className="font-semibold text-[#0A52A9]">{progressPercent}%</span>
+                              </div>
+                              <div className="w-full h-2 bg-[#F8FAFC] border border-[#E6DEBA] rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-gradient-to-r from-[#1A69CC] to-[#0A52A9] rounded-full transition-all duration-500"
+                                  style={{ width: `${progressPercent}%` }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
