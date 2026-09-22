@@ -108,12 +108,21 @@ export async function POST(req: Request) {
     // Resolve targeted reward if claimCode or rewardId was provided
     let pendingReward = null;
     if (requestedClaimCode || requestedRewardId) {
-      const allRewards = await dbService.getRewards(false);
-      const match = allRewards.find(
+      // Prioritize active rewards first so disabled or archived items never conflict
+      const activeRewards = await dbService.getRewards(true);
+      let match = activeRewards.find(
         (r) =>
           (requestedClaimCode && r.claimCode?.toUpperCase() === requestedClaimCode) ||
           (requestedRewardId && r._id === requestedRewardId)
       );
+      if (!match) {
+        const allRewards = await dbService.getRewards(false);
+        match = allRewards.find(
+          (r) =>
+            (requestedClaimCode && r.claimCode?.toUpperCase() === requestedClaimCode) ||
+            (requestedRewardId && r._id === requestedRewardId)
+        );
+      }
       if (match) {
         pendingReward = {
           id: match._id,

@@ -524,25 +524,29 @@ export const dbService = {
     return found ? { ...found } : null;
   },
 
-  async findRewardByClaimCode(code: string): Promise<IReward | null> {
+  async findRewardByClaimCode(code: string, activeOnly: boolean = true): Promise<IReward | null> {
     if (!code) return null;
     const cleanCode = code.trim().toUpperCase();
     const { isMongoose } = await connectDB();
     if (isMongoose) {
       try {
-        const r = await Reward.findOne({ claimCode: cleanCode }).lean();
+        const query: any = { claimCode: cleanCode };
+        if (activeOnly) query.isActive = true;
+        const r = await Reward.findOne(query).lean();
         if (r) return JSON.parse(JSON.stringify(r));
       } catch (e) {
         console.warn(e);
       }
     }
-    const all = await this.getRewards(false);
+    const all = await this.getRewards(activeOnly);
     return all.find((r) => r.claimCode?.toUpperCase() === cleanCode) || null;
   },
 
   async createReward(data: Partial<IReward>): Promise<IReward> {
-    const letters = ["R", "J", "B", "C", "M", "P", "S", "T", "W", "K", "F", "L", "D", "N", "V"];
+    // Unambiguous letters (excludes O, I to prevent confusion with 0, 1)
+    const letters = ["A", "B", "C", "D", "E", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
     const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    
     const genCode = () => {
       const l = letters[Math.floor(Math.random() * letters.length)];
       const d = digits[Math.floor(Math.random() * digits.length)];
@@ -553,10 +557,35 @@ export const dbService = {
     if (isMongoose) {
       try {
         const existing = await Reward.find({}).lean();
-        const existingCodes = existing.map((x: any) => x.claimCode).filter(Boolean);
-        let finalCode = data.claimCode ? data.claimCode.trim().toUpperCase() : genCode();
-        while (existingCodes.includes(finalCode)) {
-          finalCode = genCode();
+        const existingCodes = new Set(existing.map((x: any) => x.claimCode?.toUpperCase()).filter(Boolean));
+        let finalCode = data.claimCode ? data.claimCode.trim().toUpperCase() : "";
+        
+        if (!finalCode) {
+          // Attempt 150 times with 2-char format (Letter + Digit, e.g. R1, J6)
+          for (let attempt = 0; attempt < 150; attempt++) {
+            const candidate = genCode();
+            if (!existingCodes.has(candidate)) {
+              finalCode = candidate;
+              break;
+            }
+          }
+          // If high density, scale to 3-char format (Letter + 2 Digits, e.g. R12)
+          if (!finalCode) {
+            for (let attempt = 0; attempt < 1000; attempt++) {
+              const l = letters[Math.floor(Math.random() * letters.length)];
+              const d1 = digits[Math.floor(Math.random() * digits.length)];
+              const d2 = digits[Math.floor(Math.random() * digits.length)];
+              const candidate = `${l}${d1}${d2}`;
+              if (!existingCodes.has(candidate)) {
+                finalCode = candidate;
+                break;
+              }
+            }
+          }
+          // Ultimate fallback guarantee
+          if (!finalCode) {
+            finalCode = `R${Date.now().toString().slice(-3)}`;
+          }
         }
 
         const r = await Reward.create({
@@ -576,6 +605,23 @@ export const dbService = {
         throw new Error(e.message || "Failed to create reward in database");
       }
     }
+
+    const existing = memoryStore.rewards;
+    const existingCodes = new Set(existing.map((x: any) => x.claimCode?.toUpperCase()).filter(Boolean));
+    let finalCode = data.claimCode ? data.claimCode.trim().toUpperCase() : "";
+    if (!finalCode) {
+      for (let attempt = 0; attempt < 150; attempt++) {
+        const candidate = genCode();
+        if (!existingCodes.has(candidate)) {
+          finalCode = candidate;
+          break;
+        }
+      }
+      if (!finalCode) {
+        finalCode = `${letters[0]}${Math.floor(Math.random() * 90 + 10)}`;
+      }
+    }
+
     const newReward: IReward = {
       _id: "reward_" + Math.random().toString(36).substring(2, 9),
       title: data.title || "Special Reward",
@@ -585,7 +631,7 @@ export const dbService = {
       imageUrl: data.imageUrl || "",
       isActive: data.isActive !== undefined ? data.isActive : true,
       stock: data.stock !== undefined ? data.stock : 999,
-      claimCode: data.claimCode ? data.claimCode.trim().toUpperCase() : genCode(),
+      claimCode: finalCode,
       redemptionCount: 0,
       createdAt: new Date().toISOString(),
     };
