@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #F8FAFC;
+  --foreground: #0B192C;
+  --brand-primary: #0A52A9;
+  --brand-primary-dark: #073B7A;
+  --brand-primary-light: #1A69CC;
+  --brand-coffee: #0A52A9;
+  --brand-coffee-light: #1A69CC;
+  --brand-accent: #F4EECF;
+  --brand-accent-hover: #E8E0B8;
+  --brand-cream: #FDFBF4;
+  --brand-cream-light: #FFFFFF;
+  --brand-terracotta: #0A52A9;
+  --brand-border: #E6DEBA;
+}
+
+body {
+  background-color: #F8FAFC;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(244, 238, 207, 0.6) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(10, 82, 169, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(244, 238, 207, 0.5) 0px, transparent 50%);
+  background-attachment: fixed;
+  color: #0B192C;
+  font-family: var(--font-ibm-plex-arabic), 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Modern clean typography with IBM Plex Sans Arabic */
+h1, h2, h3, h4, h5, h6, .font-serif, .font-brand, .font-subbrand {
+  font-family: var(--font-ibm-plex-arabic), 'IBM Plex Sans Arabic', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* Ultra-Modern Frosted Glass Panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 8px 32px 0 rgba(10, 82, 169, 0.04), 0 2px 8px 0 rgba(0, 0, 0, 0.02);
+}
+
+.glass-panel-subtle {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(230, 222, 186, 0.65);
+  box-shadow: 0 4px 20px 0 rgba(10, 82, 169, 0.03);
+}
+
+.glass-panel-dark {
+  background: rgba(10, 82, 169, 0.92);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 12px 40px 0 rgba(10, 82, 169, 0.22);
+}
+
+.glass-nav {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 16px 40px -8px rgba(10, 82, 169, 0.16), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.glass-banner {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 20px 48px -12px rgba(10, 82, 169, 0.22), 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.glass-input {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(230, 222, 186, 0.85);
+  border-radius: 1rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #1f1d1d;
+  box-shadow: 0 1px 2px rgba(10, 82, 169, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-input::placeholder {
+  color: #a8a29e;
+}
+
+.glass-input:hover {
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(10, 82, 169, 0.35);
+}
+
+.glass-input:focus {
+  background: #ffffff;
+  border-color: #0A52A9;
+  box-shadow: 0 0 0 3px rgba(10, 82, 169, 0.12), 0 2px 8px rgba(10, 82, 169, 0.04);
+  outline: none;
+}
+
+/* Custom Sleek Dropdown Select (Cross-Platform) */
+.glass-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(230, 222, 186, 0.9);
+  border-radius: 1rem;
+  padding: 0.75rem 2.75rem 0.75rem 1rem;
+  font-size: 0.875rem;
+  color: #1f1d1d;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-select:focus {
+  background: #ffffff;
+  border-color: #0A52A9;
+  box-shadow: 0 0 0 3px rgba(10, 82, 169, 0.12);
+  outline: none;
+}
+
+/* Monospace spacing for 6-digit PIN */
+.font-pin {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  letter-spacing: 0.18em;
+}
+
+/* Subtle custom scrollbar styled with jari royal blue */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c8d7eb;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #0A52A9;
+}
