@@ -27,6 +27,10 @@ import {
   LifeBuoy,
   Bug,
   Sparkles,
+  Terminal,
+  KeyRound,
+  HelpCircle,
+  RotateCcw,
   Check,
 } from "lucide-react";
 import { IReward, IUser, ITransaction } from "@/lib/types";
@@ -280,6 +284,39 @@ interface MetricsData {
   recentTransactions: ITransaction[];
 }
 
+const ticketCategoryOptions = [
+  {
+    value: "Bug / System Glitch",
+    label: "Bug / System Glitch",
+    subtitle: "Software errors, crashes, or glitches",
+    icon: Bug,
+  },
+  {
+    value: "Cashier & POS Terminal",
+    label: "Cashier & POS Terminal",
+    subtitle: "PIN/QR lookup, balance credit, or checkout",
+    icon: Terminal,
+  },
+  {
+    value: "Feature Requests & Enhancements",
+    label: "Feature Requests & Enhancements",
+    subtitle: "System adjustments, suggestions, or new features",
+    icon: Sparkles,
+  },
+  {
+    value: "Accounts & Access",
+    label: "Accounts & Access",
+    subtitle: "Staff login credentials, permissions, or security",
+    icon: KeyRound,
+  },
+  {
+    value: "General Inquiry",
+    label: "General Inquiry",
+    subtitle: "Operational questions, guidance, or assistance",
+    icon: HelpCircle,
+  },
+];
+
 export default function AdminPage() {
   const { config, formatCurrency } = useBrand();
 
@@ -307,6 +344,12 @@ export default function AdminPage() {
   const [ticketSubmitting, setTicketSubmitting] = useState(false);
   const [ticketSuccess, setTicketSuccess] = useState<string | null>(null);
   const [ticketError, setTicketError] = useState<string | null>(null);
+  const [ticketSubmittedData, setTicketSubmittedData] = useState<{
+    id: string;
+    category: string;
+    subject: string;
+    submittedAt: string;
+  } | null>(null);
 
   // Customer Directory State
   const [customerSearchQuery, setCustomerSearchQuery] = useState("");
@@ -699,7 +742,49 @@ export default function AdminPage() {
     }
   };
 
-  // Dispatch Support Ticket to Web3Forms / info@weblix-jo.com
+  // Collect Silent Technical Diagnostics in Background (no UI footprint)
+  const collectSilentDiagnostics = () => {
+    if (typeof window === "undefined") return {};
+
+    const ua = navigator.userAgent || "";
+    let os = "Unknown OS";
+    if (/windows phone/i.test(ua)) os = "Windows Phone";
+    else if (/win/i.test(ua)) os = "Windows";
+    else if (/android/i.test(ua)) os = "Android";
+    else if (/ipad|iphone|ipod/i.test(ua)) os = "iOS";
+    else if (/mac/i.test(ua)) os = "macOS";
+    else if (/linux/i.test(ua)) os = "Linux";
+
+    let browser = "Unknown Browser";
+    if (/edg/i.test(ua)) browser = "Microsoft Edge";
+    else if (/chrome|crios/i.test(ua)) browser = "Google Chrome";
+    else if (/firefox|fxios/i.test(ua)) browser = "Mozilla Firefox";
+    else if (/safari/i.test(ua) && !/chrome/i.test(ua)) browser = "Apple Safari";
+    else if (/opr\//i.test(ua)) browser = "Opera";
+
+    return {
+      "Store Brand": config?.storeName || "Jari Loyalty",
+      "Logged Admin": `${admin?.name || "Admin"} (${admin?.email || "Unknown"})`,
+      "Client OS": os,
+      "Browser Engine": browser,
+      "Screen Dimensions": `${window.screen?.width || 0}x${window.screen?.height || 0} (Scale: ${window.devicePixelRatio || 1})`,
+      "Page Path": window.location.pathname,
+      "Client Timestamp": new Date().toLocaleString("en-US", { timeZone: "Asia/Amman" }) + " (Amman Time)",
+      "User Agent String": ua.slice(0, 160),
+    };
+  };
+
+  // Reset ticket form state
+  const handleResetTicketForm = () => {
+    setTicketSubmittedData(null);
+    setTicketSuccess(null);
+    setTicketError(null);
+    setTicketSubject("");
+    setTicketMessage("");
+    setTicketPhone("");
+  };
+
+  // Dispatch Support Ticket to Web3Forms / info@weblix-jo.com with Dual Redundancy
   const handleSendTicket = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!ticketSubject.trim() || !ticketMessage.trim()) {
@@ -711,21 +796,29 @@ export default function AdminPage() {
     setTicketError(null);
     setTicketSuccess(null);
 
-    try {
-      const payload = {
-        access_key: "7f0e27f4-7df7-4105-af7a-985d05cc02d1",
-        subject: `[Support Ticket] ${ticketCategory}: ${ticketSubject.trim()}`,
-        from_name: `${admin?.name || "Store Admin"} (Jari Loyalty Portal)`,
-        email: "info@weblix-jo.com",
-        "Store Name": config.storeName || "Jari Loyalty",
-        "Issue Category": ticketCategory,
-        "Subject": ticketSubject.trim(),
-        "Description": ticketMessage.trim(),
-        "Contact Phone": ticketPhone.trim() || "Not provided",
-        "Submitted At": new Date().toLocaleString("en-US", { timeZone: "Asia/Amman" }) + " (Amman Time)",
-        botcheck: "",
-      };
+    const generatedId = "TKT-" + Math.floor(100000 + Math.random() * 900000);
+    const silentDiagnostics = collectSilentDiagnostics();
 
+    const payload = {
+      access_key: "7f0e27f4-7df7-4105-af7a-985d05cc02d1",
+      subject: `[Support Ticket ${generatedId}] ${ticketCategory}: ${ticketSubject.trim()}`,
+      from_name: `${admin?.name || "Store Admin"} (Jari Loyalty Portal)`,
+      email: "info@weblix-jo.com",
+      "Ticket Reference ID": generatedId,
+      "Store Name": config.storeName || "Jari Loyalty",
+      "Issue Category": ticketCategory,
+      "Subject": ticketSubject.trim(),
+      "Detailed Description": ticketMessage.trim(),
+      "Contact Phone / WhatsApp": ticketPhone.trim() || "Not provided",
+      ...silentDiagnostics,
+      botcheck: "",
+    };
+
+    let dispatched = false;
+    let errorMessage = "";
+
+    // Method 1: Client-Side Direct Dispatch to Web3Forms (Primary, bypasses server IP blocks)
+    try {
       const res = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: {
@@ -744,18 +837,65 @@ export default function AdminPage() {
       }
 
       if (res.ok && data?.success) {
-        setTicketSuccess(t.ticketSuccessMsg);
-        setTicketSubject("");
-        setTicketMessage("");
-        setTicketPhone("");
-      } else {
-        setTicketError(data?.message || "Failed to submit ticket. Please check your connection and try again.");
+        dispatched = true;
+      } else if (data?.message) {
+        errorMessage = data.message;
       }
-    } catch (err: any) {
-      setTicketError(err?.message || "Network error submitting ticket. Please try again.");
-    } finally {
-      setTicketSubmitting(false);
+    } catch (clientErr: any) {
+      console.warn("Client-side direct submission warning, attempting server route fallback...", clientErr);
     }
+
+    // Method 2: Internal API Fallback (if client-side call was blocked by browser extensions/firewall)
+    if (!dispatched) {
+      try {
+        const fallbackRes = await fetch("/api/admin/support", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ticketId: generatedId,
+            subject: ticketSubject.trim(),
+            message: ticketMessage.trim(),
+            category: ticketCategory,
+            contactPhone: ticketPhone.trim(),
+            senderName: admin?.name || "Jari Admin",
+            diagnostics: silentDiagnostics,
+          }),
+        });
+
+        let fallbackData: any = null;
+        try {
+          const fallbackText = await fallbackRes.text();
+          fallbackData = JSON.parse(fallbackText);
+        } catch {
+          // Handled below if non-JSON
+        }
+
+        if (fallbackRes.ok && fallbackData?.success) {
+          dispatched = true;
+        } else if (fallbackData?.error) {
+          errorMessage = fallbackData.error;
+        }
+      } catch (fallbackErr: any) {
+        console.error("Internal API fallback error:", fallbackErr);
+      }
+    }
+
+    if (dispatched) {
+      setTicketSubmittedData({
+        id: generatedId,
+        category: ticketCategory,
+        subject: ticketSubject.trim(),
+        submittedAt: new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }),
+      });
+      setTicketSuccess(t.ticketSuccessMsg);
+      setTicketSubject("");
+      setTicketMessage("");
+      setTicketPhone("");
+    } else {
+      setTicketError(errorMessage || "Failed to dispatch ticket. Please check your connection and try again.");
+    }
+
+    setTicketSubmitting(false);
   };
 
   if (loadingSession) {
@@ -1771,8 +1911,8 @@ export default function AdminPage() {
           <div className="space-y-6 animate-in fade-in duration-200">
             {/* Header & Direct Line Banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E6DEBA]/60">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-[#0A52A9] text-[#F4EECF] flex items-center justify-center shadow-xs shrink-0">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-[#0A52A9] text-[#F4EECF] flex items-center justify-center shadow-xs shrink-0 border border-[#0A52A9]">
                   <LifeBuoy className="w-6 h-6" />
                 </div>
                 <div>
@@ -1786,147 +1926,155 @@ export default function AdminPage() {
               </div>
 
               <div className="flex items-center gap-2 self-start sm:self-auto">
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-mono font-medium shadow-2xs">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-mono font-medium shadow-2xs">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Direct Line: info@weblix-jo.com</span>
                 </div>
               </div>
             </div>
 
-            {/* Success Message Card */}
-            {ticketSuccess && (
-              <div className="glass-panel rounded-3xl p-6 border-emerald-200 bg-emerald-50/70 text-emerald-900 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-                    <CheckCircle2 className="w-5 h-5" />
+            {/* Success Card or Form */}
+            {ticketSubmittedData ? (
+              <div className="glass-panel rounded-3xl p-8 sm:p-12 text-center max-w-xl mx-auto shadow-xs border border-[#E6DEBA]/80 bg-white/90 backdrop-blur-xl animate-in fade-in zoom-in-95 duration-200">
+                <div className="w-16 h-16 rounded-3xl bg-emerald-50 text-emerald-600 border border-emerald-200/80 flex items-center justify-center mx-auto mb-5 shadow-xs">
+                  <CheckCircle2 className="w-8 h-8" />
+                </div>
+
+                <h3 className="text-2xl font-bold text-[#0B192C] font-serif mb-2">
+                  {t.ticketSuccessTitle}
+                </h3>
+
+                <p className="text-xs sm:text-sm text-neutral-600 max-w-md mx-auto leading-relaxed mb-6">
+                  {t.ticketSuccessMsg}
+                </p>
+
+                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl bg-[#FDFBF4] border border-[#E6DEBA] text-xs font-mono font-bold text-[#0A52A9] mb-6">
+                  <span className="text-neutral-500 font-normal">Reference ID:</span>
+                  <span className="tracking-wider">{ticketSubmittedData.id}</span>
+                </div>
+
+                <div className="p-4 rounded-2xl bg-neutral-50/80 border border-neutral-200/60 text-left text-xs space-y-2.5 mb-8 font-mono">
+                  <div className="flex justify-between items-center text-neutral-500 border-b border-neutral-200/50 pb-2">
+                    <span>Category</span>
+                    <span className="font-semibold text-neutral-800">{ticketSubmittedData.category}</span>
                   </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-emerald-900 mb-0.5">
-                      {t.ticketSuccessTitle}
-                    </h4>
-                    <p className="text-xs text-emerald-800 leading-relaxed">
-                      {ticketSuccess}
-                    </p>
+                  <div className="flex justify-between items-center text-neutral-500 border-b border-neutral-200/50 pb-2">
+                    <span>Subject</span>
+                    <span className="font-semibold text-neutral-800 truncate max-w-[220px]">{ticketSubmittedData.subject}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-neutral-500">
+                    <span>Delivered To</span>
+                    <span className="font-semibold text-emerald-700">info@weblix-jo.com</span>
                   </div>
                 </div>
+
                 <button
                   type="button"
-                  onClick={() => {
-                    setTicketSuccess(null);
-                    setTicketSubject("");
-                    setTicketMessage("");
-                  }}
-                  className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold cursor-pointer transition-colors shrink-0"
+                  onClick={handleResetTicketForm}
+                  className="inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all shadow-sm hover:shadow-md cursor-pointer active:scale-98"
                 >
-                  Send Another Ticket
+                  <RotateCcw className="w-4 h-4" />
+                  <span>Submit Another Ticket</span>
                 </button>
               </div>
-            )}
+            ) : (
+              <div className="space-y-6">
+                {/* Error Alert Card */}
+                {ticketError && (
+                  <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2.5">
+                    <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
+                    <span>{ticketError}</span>
+                  </div>
+                )}
 
-            {/* Error Alert Card */}
-            {ticketError && (
-              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-xs text-red-700 flex items-center gap-2.5">
-                <AlertCircle className="w-4 h-4 shrink-0 text-red-600" />
-                <span>{ticketError}</span>
+                {/* Ticket Form Card */}
+                <div className="glass-panel rounded-3xl p-5 sm:p-8 shadow-xs border border-white/80">
+                  <form onSubmit={handleSendTicket} className="space-y-6">
+                    {/* Section 1: Issue Category (Dropdown Select) */}
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-700 mb-2">
+                        {t.ticketCategory}
+                      </label>
+                      <CustomGlassSelect
+                        value={ticketCategory}
+                        onChange={setTicketCategory}
+                        placeholder="Select Issue Category..."
+                        options={ticketCategoryOptions}
+                      />
+                    </div>
+
+                    {/* Section 2: Subject */}
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-700 mb-2">
+                        {t.ticketSubject}
+                      </label>
+                      <input
+                        type="text"
+                        value={ticketSubject}
+                        onChange={(e) => setTicketSubject(e.target.value)}
+                        placeholder="Brief summary of the issue..."
+                        className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm font-medium text-neutral-900 placeholder:text-neutral-400 shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
+                        required
+                      />
+                    </div>
+
+                    {/* Section 3: Detailed Description */}
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-700 mb-2">
+                        {t.ticketMessage}
+                      </label>
+                      <textarea
+                        rows={5}
+                        value={ticketMessage}
+                        onChange={(e) => setTicketMessage(e.target.value)}
+                        placeholder="Describe the issue, steps to reproduce, or details to help us resolve it quickly..."
+                        className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm text-neutral-900 placeholder:text-neutral-400 resize-none leading-relaxed min-h-[130px] shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
+                        required
+                      />
+                    </div>
+
+                    {/* Section 4: Contact Phone (Optional) */}
+                    <div>
+                      <label className="block text-xs font-semibold text-neutral-700 mb-2">
+                        {t.ticketPhone}
+                      </label>
+                      <input
+                        type="tel"
+                        value={ticketPhone}
+                        onChange={(e) => setTicketPhone(e.target.value)}
+                        placeholder="+962 7X XXX XXXX"
+                        className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm font-mono text-neutral-900 placeholder:text-neutral-400 shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
+                      />
+                    </div>
+
+                    {/* Section 5: Submit Button */}
+                    <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+                      <span className="text-xs text-neutral-500">
+                        Dispatched directly to engineering team via Web3Forms.
+                      </span>
+                      <button
+                        type="submit"
+                        disabled={ticketSubmitting}
+                        className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md cursor-pointer active:scale-98"
+                      >
+                        {ticketSubmitting ? (
+                          <div className="flex items-center gap-1.5 py-0.5">
+                            <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-1" />
+                            <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-2" />
+                            <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-3" />
+                          </div>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4" />
+                            <span>{t.ticketSubmit}</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
             )}
-
-            {/* Ticket Form Card */}
-            <div className="glass-panel rounded-3xl p-5 sm:p-7 shadow-xs">
-              <form onSubmit={handleSendTicket} className="space-y-6">
-                {/* Section 1: Issue Category (Dropdown Select) */}
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
-                    {t.ticketCategory}
-                  </label>
-                  <CustomGlassSelect
-                    value={ticketCategory}
-                    onChange={setTicketCategory}
-                    placeholder="-- Select Issue Category --"
-                    options={[
-                      { value: "Bug / System Glitch", label: "Bug / System Glitch", subtitle: "Software errors, crashes, or glitches" },
-                      { value: "Cashier POS Terminal", label: "Cashier POS Terminal", subtitle: "PIN/QR lookup, balance credit, or checkout" },
-                      { value: "Customer Pass & QR", label: "Customer Pass & QR", subtitle: "Customer code, PIN issues, or web app pass" },
-                      { value: "Rewards & Redemptions", label: "Rewards & Redemptions", subtitle: "Reward claim codes, points deductions, or catalogue" },
-                      { value: "Staff Accounts & Logins", label: "Staff Accounts & Logins", subtitle: "Admin or cashier access credentials" },
-                      { value: "Feature Request / Other", label: "Feature Request / Other", subtitle: "System adjustments, suggestions, or inquiries" },
-                    ]}
-                  />
-                </div>
-
-                {/* Section 2: Subject */}
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
-                    {t.ticketSubject}
-                  </label>
-                  <input
-                    type="text"
-                    value={ticketSubject}
-                    onChange={(e) => setTicketSubject(e.target.value)}
-                    placeholder="Brief summary of the issue or inquiry..."
-                    className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm font-medium text-neutral-900 placeholder:text-neutral-400 shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
-                    required
-                  />
-                </div>
-
-                {/* Section 3: Detailed Description */}
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
-                    {t.ticketMessage}
-                  </label>
-                  <textarea
-                    rows={5}
-                    value={ticketMessage}
-                    onChange={(e) => setTicketMessage(e.target.value)}
-                    placeholder="Explain what happened in detail: steps to reproduce, customer PIN or reward code (if relevant), error messages, or what needs fixing..."
-                    className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm text-neutral-900 placeholder:text-neutral-400 resize-none leading-relaxed min-h-[120px] shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
-                    required
-                  />
-                </div>
-
-                {/* Section 4: Contact Phone (Optional) */}
-                <div>
-                  <label className="block text-xs font-mono uppercase tracking-wider text-neutral-600 mb-2 font-semibold">
-                    {t.ticketPhone}
-                  </label>
-                  <input
-                    type="tel"
-                    value={ticketPhone}
-                    onChange={(e) => setTicketPhone(e.target.value)}
-                    placeholder="+962 7X XXX XXXX"
-                    className="glass-input w-full px-4 py-3.5 rounded-2xl text-sm font-mono text-neutral-900 placeholder:text-neutral-400 shadow-xs focus:ring-4 focus:ring-[#0A52A9]/10"
-                  />
-                </div>
-
-                {/* Section 5: Submit Button */}
-                <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <span className="text-xs text-neutral-500">
-                    Dispatched directly to engineering team via Web3Forms.
-                  </span>
-                  <button
-                    type="submit"
-                    disabled={ticketSubmitting}
-                    className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center gap-2.5 shadow-sm hover:shadow-md cursor-pointer active:scale-98"
-                  >
-                    {ticketSubmitting ? (
-                      <>
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-1" />
-                          <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-2" />
-                          <span className="w-2 h-2 rounded-full bg-[#F4EECF] animate-dot-3" />
-                        </div>
-                        <span>{t.ticketSubmitting}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4" />
-                        <span>{t.ticketSubmit}</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </form>
-            </div>
           </div>
         )}
       </main>

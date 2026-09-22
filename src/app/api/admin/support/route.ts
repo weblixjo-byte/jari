@@ -18,6 +18,8 @@ export async function POST(req: Request) {
       category = "Bug / System Glitch",
       contactPhone,
       senderName,
+      diagnostics = {},
+      ticketId,
     } = body;
 
     if (!subject || !message) {
@@ -32,15 +34,19 @@ export async function POST(req: Request) {
       process.env.NEXT_PUBLIC_WEB3FORMS_ACCESS_KEY ||
       "7f0e27f4-7df7-4105-af7a-985d05cc02d1";
 
+    const id = ticketId || "TKT-" + Math.floor(100000 + Math.random() * 900000);
+
     const payload = {
       access_key: accessKey,
-      subject: `[Support Ticket] ${category}: ${subject}`,
+      subject: `[Support Ticket ${id}] ${category}: ${subject}`,
       from_name: `${senderName || session.username || "Admin"} (Store Admin)`,
       email: "info@weblix-jo.com",
+      "Ticket Reference ID": id,
       "Issue Category": category,
       "Subject": subject,
-      "Description": message,
+      "Detailed Description": message,
       "Contact Phone / WhatsApp": contactPhone || "None provided",
+      ...diagnostics,
       "Submitted At": new Date().toLocaleString("en-US", { timeZone: "Asia/Amman" }) + " (Amman Time)",
       botcheck: "",
     };
@@ -66,7 +72,7 @@ export async function POST(req: Request) {
       return NextResponse.json({
         success: true,
         message: "Support ticket submitted successfully.",
-        ticketId: "TKT-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+        ticketId: id,
       });
     } else {
       return NextResponse.json(

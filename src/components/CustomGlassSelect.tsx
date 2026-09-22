@@ -9,6 +9,7 @@ export interface SelectOption {
   subtitle?: string;
   badge?: string;
   avatarUrl?: string;
+  icon?: React.ComponentType<{ className?: string }>;
 }
 
 interface CustomGlassSelectProps {
@@ -86,13 +87,17 @@ export default function CustomGlassSelect({
         <div className="flex items-center gap-2 min-w-0 overflow-hidden pr-2 flex-1">
           {selectedOption ? (
             <div className="flex items-center gap-2 w-full min-w-0">
-              {selectedOption.avatarUrl && (
+              {selectedOption.icon ? (
+                <div className="w-5 h-5 rounded-lg bg-[#0A52A9]/10 text-[#0A52A9] flex items-center justify-center shrink-0">
+                  <selectedOption.icon className="w-3.5 h-3.5" />
+                </div>
+              ) : selectedOption.avatarUrl ? (
                 <img
                   src={selectedOption.avatarUrl}
                   alt=""
                   className="w-5 h-5 rounded-full object-cover shrink-0 border border-[#E6DEBA]"
                 />
-              )}
+              ) : null}
               <span className="truncate font-medium text-neutral-900 text-xs sm:text-sm">
                 {selectedOption.label}
               </span>
@@ -140,7 +145,7 @@ export default function CustomGlassSelect({
             </div>
           )}
 
-          <div className="max-h-56 overflow-y-auto space-y-0.5">
+          <div className="max-h-64 overflow-y-auto space-y-1">
             {filteredOptions.length === 0 ? (
               <div className="py-4 text-center text-xs text-neutral-400 font-mono">
                 No matching options found
@@ -156,20 +161,30 @@ export default function CustomGlassSelect({
                       onChange(opt.value);
                       setIsOpen(false);
                     }}
-                    className={`w-full flex items-center justify-between gap-2 px-3 py-2.5 rounded-xl text-left text-xs transition-all cursor-pointer ${
+                    className={`w-full flex items-center justify-between gap-2.5 px-3 py-2.5 rounded-xl text-left text-xs transition-all cursor-pointer ${
                       isSelected
                         ? "bg-[#0A52A9] text-[#F4EECF] font-semibold shadow-xs"
                         : "text-neutral-700 hover:bg-[#FDFBF4] hover:text-[#0A52A9]"
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0 flex-1">
-                      {opt.avatarUrl && (
+                      {opt.icon ? (
+                        <div
+                          className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                            isSelected
+                              ? "bg-white/20 text-[#F4EECF]"
+                              : "bg-[#0A52A9]/10 text-[#0A52A9]"
+                          }`}
+                        >
+                          <opt.icon className="w-3.5 h-3.5" />
+                        </div>
+                      ) : opt.avatarUrl ? (
                         <img
                           src={opt.avatarUrl}
                           alt=""
                           className="w-6 h-6 rounded-full object-cover shrink-0 border border-[#E6DEBA]"
                         />
-                      )}
+                      ) : null}
                       <div className="flex flex-col min-w-0">
                         <span className="truncate font-medium">{opt.label}</span>
                         {opt.subtitle && (
