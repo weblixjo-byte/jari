@@ -1634,15 +1634,9 @@ export default function CustomerPage() {
                 Give this Reward Code to Cashier
               </span>
               <div className="flex items-center justify-center gap-2 whitespace-nowrap overflow-x-auto py-0.5">
-                <div className="flex items-center justify-center gap-1 sm:gap-1.5 font-pin font-bold text-[#0A52A9] select-all whitespace-nowrap tracking-normal sm:tracking-wider">
-                  <span className="text-xl sm:text-2xl md:text-3xl">
-                    {customer.formattedPin}
-                  </span>
-                  <span className="text-neutral-400 text-lg sm:text-xl font-bold px-0.5">-</span>
-                  <span className="bg-[#0A52A9] text-[#F4EECF] px-2 py-0.5 rounded-lg text-lg sm:text-2xl font-mono font-black tracking-widest shadow-2xs">
-                    {redeemingReward.claimCode || "10"}
-                  </span>
-                </div>
+                <span className="font-pin text-xl sm:text-2xl md:text-3xl font-bold tracking-wider text-[#0A52A9] select-all whitespace-nowrap">
+                  {customer.formattedPin} - {redeemingReward.claimCode || "10"}
+                </span>
                 <button
                   onClick={() =>
                     handleCopyPin(
