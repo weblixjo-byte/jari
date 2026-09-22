@@ -86,6 +86,7 @@ interface RewardItem {
   category: string;
   imageUrl?: string;
   canRedeem: boolean;
+  claimCode?: string;
 }
 
 interface NotificationItem {
@@ -248,14 +249,17 @@ export default function CustomerPage() {
     }
   };
 
-  // Fetch Rewards
+  // Fetch Rewards (Strictly sorted ascending by points cost)
   const loadRewards = async () => {
     try {
       const headers = getAuthHeaders();
       const res = await fetch("/api/customer/rewards", { headers });
       const data = await res.json();
       if (data.success) {
-        setRewards(data.rewards || []);
+        const sorted = (data.rewards || []).sort(
+          (a: any, b: any) => (a.pointsRequired || 0) - (b.pointsRequired || 0)
+        );
+        setRewards(sorted);
       }
     } catch (e) {
       console.error(e);
@@ -702,10 +706,14 @@ export default function CustomerPage() {
     window.location.href = "/api/auth/google/login";
   };
 
-  // Copy 6-Digit PIN
-  const handleCopyPin = () => {
-    if (!customer?.rawPin) return;
-    navigator.clipboard.writeText(customer.rawPin);
+  // Copy 6-Digit PIN or Custom Redemption Code
+  const handleCopyPin = (customCode?: any) => {
+    const textToCopy =
+      typeof customCode === "string"
+        ? customCode
+        : customer?.rawPin || customer?.formattedPin?.replace(/\s+/g, "");
+    if (!textToCopy) return;
+    navigator.clipboard.writeText(textToCopy);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -1264,9 +1272,11 @@ export default function CustomerPage() {
               </div>
             </div>
 
-            {/* Rewards Cards Stack */}
+            {/* Rewards Cards Stack - Strictly sorted ascending by points required */}
             <div className="space-y-4">
-              {rewards.map((reward) => {
+              {[...rewards]
+                .sort((a, b) => (a.pointsRequired || 0) - (b.pointsRequired || 0))
+                .map((reward) => {
                 const canAfford = customer.pointsBalance >= reward.pointsRequired;
                 const progressPercent = Math.min(
                   100,
@@ -1618,19 +1628,25 @@ export default function CustomerPage() {
               </div>
             </div>
 
-            {/* Prominent Counter Code Box */}
-            <div className="glass-panel-subtle border-2 border-[#0A52A9]/30 rounded-2xl p-4 mb-3 text-center shadow-xs">
-              <span className="text-[10px] uppercase tracking-wider font-mono text-neutral-400 block mb-1">
-                Give this 6-Digit Code to Cashier
+            {/* Prominent Counter Code Box with Dedicated Reward Suffix */}
+            <div className="glass-panel-subtle border-2 border-[#0A52A9]/40 rounded-2xl p-4 mb-3 text-center shadow-xs">
+              <span className="text-[10px] uppercase tracking-wider font-mono text-neutral-500 block mb-1 font-semibold">
+                Give this Reward Code to Cashier
               </span>
-              <div className="flex items-center justify-center gap-3">
-                <span className="font-pin text-3xl font-bold tracking-widest text-[#0A52A9] select-all">
-                  {customer.formattedPin}
+              <div className="flex items-center justify-center gap-2">
+                <span className="font-pin text-2xl sm:text-3xl font-bold tracking-wider text-[#0A52A9] select-all">
+                  {customer.formattedPin} - <span className="bg-[#0A52A9] text-[#F4EECF] px-2 py-0.5 rounded-lg text-lg sm:text-xl font-mono inline-block shadow-2xs">{redeemingReward.claimCode || "R1"}</span>
                 </span>
                 <button
-                  onClick={handleCopyPin}
+                  onClick={() =>
+                    handleCopyPin(
+                      `${(customer.rawPin || customer.formattedPin || "").replace(/\D/g, "")}-${
+                        redeemingReward.claimCode || "R1"
+                      }`
+                    )
+                  }
                   className="p-1.5 rounded-lg border border-[#E6DEBA] bg-white/80 hover:bg-[#FDFBF4] text-neutral-600 transition-colors active:scale-95 cursor-pointer"
-                  title="Copy PIN"
+                  title="Copy Reward Code"
                 >
                   {copied ? (
                     <Check className="w-4 h-4 text-emerald-600" />
@@ -1641,24 +1657,24 @@ export default function CustomerPage() {
               </div>
               {copied && (
                 <span className="text-[10px] font-mono text-[#0A52A9] mt-1 block">
-                  Copied to clipboard!
+                  Copied reward code to clipboard!
                 </span>
               )}
             </div>
 
-            {/* QR Code Presentation */}
+            {/* QR Code Presentation with Reward Claim Suffix */}
             <div className="flex flex-col items-center justify-center mb-4">
               <div className="p-2.5 bg-white rounded-xl border border-[#E6DEBA] shadow-2xs">
                 <QRCodeSVG
-                  value={customer.qrSecret}
-                  size={120}
+                  value={`${customer.qrSecret}:CLAIM:${redeemingReward.claimCode || "R1"}`}
+                  size={124}
                   level="H"
                   includeMargin={false}
                   fgColor="#0A52A9"
                 />
               </div>
-              <span className="text-[10px] text-neutral-400 font-mono mt-1.5">
-                Or scan customer QR on POS terminal
+              <span className="text-[10px] text-neutral-500 font-mono mt-1.5 text-center max-w-xs">
+                Scan on POS terminal to redeem {redeemingReward.title}
               </span>
             </div>
 

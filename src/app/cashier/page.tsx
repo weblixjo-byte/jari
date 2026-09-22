@@ -93,6 +93,8 @@ export default function CashierPage() {
   const [redeemLoading, setRedeemLoading] = useState(false);
   const [redeemError, setRedeemError] = useState<string | null>(null);
   const [activeRewards, setActiveRewards] = useState<{ _id: string; title: string; pointsRequired: number; category: string }[]>([]);
+  const [rewardSuffix, setRewardSuffix] = useState<string>("");
+  const [claimedReward, setClaimedReward] = useState<any>(null);
 
   // Cashier PWA Installation States
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -220,13 +222,24 @@ export default function CashierPage() {
       const data = await res.json();
       if (res.ok && data.success) {
         setIdentifiedCustomer(data.customer);
+        if (data.pendingReward) {
+          setClaimedReward(data.pendingReward);
+          setActionTab("redeem");
+          setRewardTitle(data.pendingReward.title);
+          setRedeemPoints(data.pendingReward.pointsRequired.toString());
+        } else {
+          setClaimedReward(null);
+          setActionTab("credit");
+        }
       } else {
         setLookupError(data.error || "Customer not found. Please verify PIN or QR.");
         setIdentifiedCustomer(null);
+        setClaimedReward(null);
       }
     } catch (e: any) {
       setLookupError(e.message || "Error looking up customer");
       setIdentifiedCustomer(null);
+      setClaimedReward(null);
     } finally {
       setLookupLoading(false);
     }
@@ -238,7 +251,8 @@ export default function CashierPage() {
     const newPin = pinQuery + digit;
     setPinQuery(newPin);
     if (newPin.length === 6) {
-      performLookup(newPin);
+      const fullQuery = rewardSuffix ? `${newPin}-${rewardSuffix}` : newPin;
+      performLookup(fullQuery);
     }
   };
 
@@ -248,6 +262,7 @@ export default function CashierPage() {
 
   const handleKeypadClear = () => {
     setPinQuery("");
+    setRewardSuffix("");
     setLookupError(null);
   };
 
@@ -264,6 +279,8 @@ export default function CashierPage() {
     setBillAmount("");
     setPinQuery("");
     setQrQuery("");
+    setRewardSuffix("");
+    setClaimedReward(null);
     setLookupError(null);
     setTransactError(null);
     setRedeemError(null);
@@ -634,26 +651,46 @@ export default function CashierPage() {
                     Enter Customer 6-Digit PIN
                   </span>
 
-                  {/* 6 Digit Display Boxes */}
-                  <div className="flex justify-center gap-2 my-2 dir-ltr">
-                    {[0, 1, 2, 3, 4, 5].map((idx) => {
-                      const char = pinQuery[idx];
-                      return (
-                        <div
-                          key={idx}
-                          className={`w-10 h-12 sm:w-12 sm:h-14 rounded-xl border-2 flex items-center justify-center text-xl font-bold font-mono transition-all ${
-                            char
-                              ? "border-[#0A52A9] bg-[#FDFBF4] text-[#0A52A9]"
-                              : idx === pinQuery.length
-                              ? "border-[#0A52A9] bg-white animate-pulse"
-                              : "border-[#E6DEBA] bg-[#F8FAFC]/50 text-neutral-300"
-                          }`}
-                        >
-                          {char || "•"}
-                        </div>
-                      );
-                    })}
+                  {/* 6 Digit Display Boxes + Optional Reward Code Suffix */}
+                  <div className="flex items-center justify-center gap-1 sm:gap-2 my-2 dir-ltr">
+                    <div className="flex justify-center gap-1 sm:gap-1.5">
+                      {[0, 1, 2, 3, 4, 5].map((idx) => {
+                        const char = pinQuery[idx];
+                        return (
+                          <div
+                            key={idx}
+                            className={`w-9 h-12 sm:w-11 sm:h-13 rounded-xl border-2 flex items-center justify-center text-xl font-bold font-mono transition-all ${
+                              char
+                                ? "border-[#0A52A9] bg-[#FDFBF4] text-[#0A52A9]"
+                                : idx === pinQuery.length
+                                ? "border-[#0A52A9] bg-white animate-pulse"
+                                : "border-[#E6DEBA] bg-[#F8FAFC]/50 text-neutral-300"
+                            }`}
+                          >
+                            {char || "•"}
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <span className="text-neutral-400 font-bold text-lg px-0.5">-</span>
+
+                    <input
+                      type="text"
+                      maxLength={3}
+                      value={rewardSuffix}
+                      onChange={(e) => setRewardSuffix(e.target.value.toUpperCase().trim())}
+                      placeholder="R1"
+                      className="w-12 h-12 sm:w-14 sm:h-13 rounded-xl border-2 border-dashed border-[#0A52A9]/60 bg-[#FDFBF4] text-center text-base sm:text-lg font-bold font-mono text-[#0A52A9] uppercase focus:outline-none focus:border-[#0A52A9] placeholder:text-neutral-300 shadow-2xs"
+                      title="Optional Reward Code (e.g. R1, J6)"
+                    />
                   </div>
+
+                  {rewardSuffix && (
+                    <span className="text-[11px] font-mono text-[#0A52A9] block font-semibold">
+                      Targeting Reward Code: <b>{rewardSuffix}</b>
+                    </span>
+                  )}
                 </div>
 
                 {/* Tactile On-Screen Numpad for Mobile Fast Entry */}
@@ -696,7 +733,7 @@ export default function CashierPage() {
                 {/* Search Button */}
                 <button
                   type="button"
-                  onClick={() => performLookup(pinQuery)}
+                  onClick={() => performLookup(rewardSuffix ? `${pinQuery}-${rewardSuffix}` : pinQuery)}
                   disabled={lookupLoading || pinQuery.length < 6}
                   className="w-full py-3.5 rounded-2xl bg-[#0A52A9] text-[#F4EECF] text-sm font-bold hover:bg-[#073B7A] transition-all disabled:opacity-40 cursor-pointer shadow-xs flex items-center justify-center gap-2 active:scale-98"
                 >
@@ -707,7 +744,7 @@ export default function CashierPage() {
                     </>
                   ) : (
                     <>
-                      <span>Search by PIN</span>
+                      <span>{rewardSuffix ? `Redeem with Code ${rewardSuffix}` : "Search by PIN"}</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}
@@ -751,7 +788,7 @@ export default function CashierPage() {
                     type="text"
                     value={qrQuery}
                     onChange={(e) => setQrQuery(e.target.value)}
-                    placeholder="Customer QR code..."
+                    placeholder="PIN, QR token, or e.g. 482-910-R1..."
                     className="glass-input flex-1 text-xs font-mono"
                   />
                   <button
@@ -997,6 +1034,51 @@ export default function CashierPage() {
                   </div>
                 )}
 
+                {claimedReward && (
+                  <div className="p-3.5 rounded-2xl bg-[#0A52A9]/5 border-2 border-[#0A52A9]/30 flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3 min-w-0">
+                      {claimedReward.imageUrl ? (
+                        <img
+                          src={claimedReward.imageUrl}
+                          alt={claimedReward.title}
+                          className="w-12 h-12 rounded-xl object-cover border border-[#E6DEBA] shrink-0"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-xl bg-[#0A52A9]/10 text-[#0A52A9] flex items-center justify-center font-bold text-sm shrink-0">
+                          {claimedReward.claimCode || "RW"}
+                        </div>
+                      )}
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-md bg-[#0A52A9] text-[#F4EECF] font-mono">
+                            CODE: {claimedReward.claimCode}
+                          </span>
+                          {claimedReward.category && (
+                            <span className="text-[10px] text-neutral-500 font-medium">
+                              {claimedReward.category}
+                            </span>
+                          )}
+                        </div>
+                        <h5 className="text-sm font-bold text-[#0B192C] truncate mt-0.5">
+                          {claimedReward.title}
+                        </h5>
+                        <p className="text-xs font-mono font-bold text-[#0A52A9]">
+                          {claimedReward.pointsRequired} pts
+                        </p>
+                      </div>
+                    </div>
+                    {claimedReward.canRedeem ? (
+                      <span className="text-xs font-bold text-emerald-700 bg-emerald-100/80 px-2.5 py-1 rounded-full shrink-0">
+                        Eligible
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold text-red-600 bg-red-100/80 px-2.5 py-1 rounded-full shrink-0">
+                        Insufficient Points
+                      </span>
+                    )}
+                  </div>
+                )}
+
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-neutral-600 mb-1.5">
@@ -1009,6 +1091,11 @@ export default function CashierPage() {
                         const matched = activeRewards.find((r) => r.title === val);
                         if (matched) {
                           setRedeemPoints(matched.pointsRequired.toString());
+                          if (claimedReward && claimedReward.title !== matched.title) {
+                            setClaimedReward(null);
+                          }
+                        } else {
+                          setClaimedReward(null);
                         }
                       }}
                       placeholder="Select Reward or Reason..."
@@ -1070,7 +1157,11 @@ export default function CashierPage() {
                         </>
                       ) : (
                         <>
-                          <span>Confirm Reward Redemption</span>
+                          <span>
+                            {claimedReward
+                              ? `Confirm & Redeem ${claimedReward.title}`
+                              : "Confirm Reward Redemption"}
+                          </span>
                           <Gift className="w-4 h-4" />
                         </>
                       )}

@@ -13,9 +13,12 @@ export async function GET() {
       if (user) userPoints = user.pointsBalance;
     }
 
+    // Ensure strict ascending sort by pointsRequired (lowest to highest)
+    const sorted = [...rewards].sort((a, b) => a.pointsRequired - b.pointsRequired);
+
     return NextResponse.json({
       success: true,
-      rewards: rewards.map((r) => ({
+      rewards: sorted.map((r) => ({
         ...r,
         canRedeem: userPoints >= r.pointsRequired,
       })),

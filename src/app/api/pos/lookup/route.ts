@@ -22,6 +22,30 @@ export async function POST(req: Request) {
     }
 
     let cleaned = query.trim();
+    let requestedClaimCode: string | null = null;
+    let requestedRewardId: string | null = null;
+
+    // Check if query has a claim code suffix or parameter
+    // e.g. "token:CLAIM:R1" or URL with ?claim=R1
+    if (cleaned.includes(":CLAIM:")) {
+      const parts = cleaned.split(":CLAIM:");
+      cleaned = parts[0].trim();
+      requestedClaimCode = parts[1]?.trim()?.toUpperCase() || null;
+    } else if (cleaned.includes("claim=")) {
+      try {
+        const u = new URL(cleaned.startsWith("http") ? cleaned : `http://dummy.com/${cleaned}`);
+        requestedClaimCode = u.searchParams.get("claim")?.toUpperCase() || null;
+        requestedRewardId = u.searchParams.get("rewardId") || null;
+      } catch {}
+    }
+
+    // Check if cleaned is formatted as 6 digits + 2-3 alphanumeric suffix:
+    // e.g. "482-910-R1", "482 910 R1", "482910R1", "482910-R1"
+    const pinWithSuffixMatch = cleaned.match(/^(\d{3})\s*[- ]?\s*(\d{3})\s*[- ]?\s*([A-Za-z]\d|[A-Za-z]{1,2}\d?)$/i);
+    if (pinWithSuffixMatch) {
+      cleaned = `${pinWithSuffixMatch[1]}${pinWithSuffixMatch[2]}`; // "482910"
+      requestedClaimCode = pinWithSuffixMatch[3].toUpperCase(); // "R1"
+    }
 
     // If scanned data is a full URL, extract relevant query parameters
     if (cleaned.startsWith("http://") || cleaned.startsWith("https://")) {
@@ -30,6 +54,9 @@ export async function POST(req: Request) {
         const extracted = parsedUrl.searchParams.get("token") || parsedUrl.searchParams.get("qr") || parsedUrl.searchParams.get("pin");
         if (extracted) {
           cleaned = extracted.trim();
+        }
+        if (!requestedClaimCode && parsedUrl.searchParams.get("claim")) {
+          requestedClaimCode = parsedUrl.searchParams.get("claim")!.toUpperCase();
         }
       } catch {
         // Ignore URL parsing errors and keep cleaned
@@ -78,6 +105,28 @@ export async function POST(req: Request) {
 
     const recentTxs = await dbService.getCustomerTransactions(customer._id);
 
+    // Resolve targeted reward if claimCode or rewardId was provided
+    let pendingReward = null;
+    if (requestedClaimCode || requestedRewardId) {
+      const allRewards = await dbService.getRewards(false);
+      const match = allRewards.find(
+        (r) =>
+          (requestedClaimCode && r.claimCode?.toUpperCase() === requestedClaimCode) ||
+          (requestedRewardId && r._id === requestedRewardId)
+      );
+      if (match) {
+        pendingReward = {
+          id: match._id,
+          title: match.title,
+          pointsRequired: match.pointsRequired,
+          category: match.category,
+          imageUrl: match.imageUrl,
+          claimCode: match.claimCode,
+          canRedeem: customer.pointsBalance >= match.pointsRequired,
+        };
+      }
+    }
+
     return NextResponse.json({
       success: true,
       customer: {
@@ -92,6 +141,7 @@ export async function POST(req: Request) {
         currency: config.currency,
         pointsPerUnit: config.pointsPerUnit,
       },
+      pendingReward,
       recentTransactions: recentTxs.slice(0, 5),
     });
   } catch (error: any) {

@@ -71,6 +71,7 @@ export interface IReward {
   isActive: boolean;
   stock?: number;
   redemptionCount?: number;
+  claimCode?: string; // Short unique code e.g. "R1", "J6"
   createdAt: string | Date;
 }
 

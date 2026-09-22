@@ -478,18 +478,35 @@ export const dbService = {
 
   // Rewards
   async getRewards(activeOnly: boolean = true): Promise<IReward[]> {
+    const letters = ["R", "J", "B", "C", "M", "P", "S", "T", "W", "K", "F", "L", "D", "N", "V"];
+    const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    const getFallbackCode = (idx: number) => {
+      const l = letters[idx % letters.length];
+      const d = digits[(idx * 3 + 1) % digits.length];
+      return `${l}${d}`;
+    };
+
     const { isMongoose } = await connectDB();
     if (isMongoose) {
       try {
         const filter = activeOnly ? { isActive: true } : {};
         const list = await Reward.find(filter).sort({ pointsRequired: 1 }).lean();
-        return JSON.parse(JSON.stringify(list));
+        const mapped = list.map((r: any, idx: number) => {
+          if (!r.claimCode) {
+            r.claimCode = getFallbackCode(idx);
+          }
+          return r;
+        });
+        // Strict ascending sort by pointsRequired
+        mapped.sort((a: any, b: any) => a.pointsRequired - b.pointsRequired);
+        return JSON.parse(JSON.stringify(mapped));
       } catch (e) {
         console.warn(e);
       }
     }
     return memoryStore.rewards
       .filter((r) => (!activeOnly || r.isActive))
+      .map((r, idx) => ({ ...r, claimCode: r.claimCode || getFallbackCode(idx) }))
       .sort((a, b) => a.pointsRequired - b.pointsRequired);
   },
 
@@ -507,10 +524,41 @@ export const dbService = {
     return found ? { ...found } : null;
   },
 
-  async createReward(data: Partial<IReward>): Promise<IReward> {
+  async findRewardByClaimCode(code: string): Promise<IReward | null> {
+    if (!code) return null;
+    const cleanCode = code.trim().toUpperCase();
     const { isMongoose } = await connectDB();
     if (isMongoose) {
       try {
+        const r = await Reward.findOne({ claimCode: cleanCode }).lean();
+        if (r) return JSON.parse(JSON.stringify(r));
+      } catch (e) {
+        console.warn(e);
+      }
+    }
+    const all = await this.getRewards(false);
+    return all.find((r) => r.claimCode?.toUpperCase() === cleanCode) || null;
+  },
+
+  async createReward(data: Partial<IReward>): Promise<IReward> {
+    const letters = ["R", "J", "B", "C", "M", "P", "S", "T", "W", "K", "F", "L", "D", "N", "V"];
+    const digits = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+    const genCode = () => {
+      const l = letters[Math.floor(Math.random() * letters.length)];
+      const d = digits[Math.floor(Math.random() * digits.length)];
+      return `${l}${d}`;
+    };
+
+    const { isMongoose } = await connectDB();
+    if (isMongoose) {
+      try {
+        const existing = await Reward.find({}).lean();
+        const existingCodes = existing.map((x: any) => x.claimCode).filter(Boolean);
+        let finalCode = data.claimCode ? data.claimCode.trim().toUpperCase() : genCode();
+        while (existingCodes.includes(finalCode)) {
+          finalCode = genCode();
+        }
+
         const r = await Reward.create({
           title: data.title,
           description: data.description || "",
@@ -519,6 +567,7 @@ export const dbService = {
           imageUrl: data.imageUrl || "",
           stock: data.stock !== undefined ? Number(data.stock) : 999,
           isActive: data.isActive !== undefined ? Boolean(data.isActive) : true,
+          claimCode: finalCode,
           redemptionCount: 0,
         });
         return JSON.parse(JSON.stringify(r.toObject()));
@@ -536,6 +585,7 @@ export const dbService = {
       imageUrl: data.imageUrl || "",
       isActive: data.isActive !== undefined ? data.isActive : true,
       stock: data.stock !== undefined ? data.stock : 999,
+      claimCode: data.claimCode ? data.claimCode.trim().toUpperCase() : genCode(),
       redemptionCount: 0,
       createdAt: new Date().toISOString(),
     };
