@@ -116,14 +116,14 @@ export default function CustomGlassSelect({
 
         <ChevronDown
           className={`w-4 h-4 text-neutral-500 shrink-0 transition-transform duration-200 ${
-            isOpen ? "rotate-180 text-[#3F1215]" : ""
+            isOpen ? "rotate-180 text-[#0A52A9]" : ""
           }`}
         />
       </button>
 
       {/* Floating Glass Menu Popup */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl bg-white/95 backdrop-blur-2xl border border-white/90 shadow-[0_16px_40px_-8px_rgba(63,18,21,0.22),0_4px_16px_rgba(0,0,0,0.08)] p-1.5 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute left-0 right-0 top-full mt-1.5 z-50 rounded-2xl bg-white/95 backdrop-blur-2xl border border-white/90 shadow-[0_16px_40px_-8px_rgba(10,82,169,0.22),0_4px_16px_rgba(0,0,0,0.08)] p-1.5 animate-in fade-in zoom-in-95 duration-150">
           {searchable && (
             <div className="p-1.5 border-b border-neutral-100 mb-1">
               <div className="relative flex items-center">
@@ -134,7 +134,7 @@ export default function CustomGlassSelect({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search..."
-                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-neutral-50 border border-neutral-200 text-xs focus:outline-none focus:border-[#3F1215] focus:bg-white transition-all font-sans"
+                  className="w-full pl-8 pr-3 py-1.5 rounded-xl bg-neutral-50 border border-neutral-200 text-xs focus:outline-none focus:border-[#0A52A9] focus:bg-white transition-all font-sans"
                 />
               </div>
             </div>

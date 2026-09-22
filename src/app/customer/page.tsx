@@ -796,7 +796,7 @@ export default function CustomerPage() {
     return (
       <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-10 h-10 rounded-full border-2 border-neutral-300 border-t-[#2C221E] animate-spin" />
+          <div className="w-10 h-10 rounded-full border-2 border-neutral-300 border-t-[#0A52A9] animate-spin" />
           <span className="text-xs font-mono text-neutral-500">Loading your loyalty pass...</span>
         </div>
       </div>
@@ -806,14 +806,14 @@ export default function CustomerPage() {
   // If Not Logged In, Show Google-Only Login & Sign-Up Screen
   if (!customer) {
     return (
-      <div className="min-h-screen bg-[#FAF5F2]/80 backdrop-blur-md flex flex-col justify-between p-6">
+      <div className="min-h-screen bg-[#F8FAFC]/80 backdrop-blur-md flex flex-col justify-between p-6">
         <div className="max-w-md w-full mx-auto my-auto">
           {/* Brand header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 rounded-2xl bg-[#3F1215] flex items-center justify-center text-white mx-auto mb-4 shadow-md overflow-hidden p-0.5 border border-[#3F1215]">
+            <div className="w-16 h-16 rounded-2xl bg-[#0A52A9] flex items-center justify-center text-white mx-auto mb-4 shadow-md overflow-hidden p-0.5 border border-[#0A52A9]">
               <img src="/logo.png" alt="jari" className="w-full h-full object-cover rounded-xl" />
             </div>
-            <h1 className="text-2xl font-serif font-medium text-[#2B0B0D] mb-1">
+            <h1 className="text-2xl font-serif font-medium text-[#0B192C] mb-1">
               {config.storeName}
             </h1>
             <p className="text-sm text-neutral-500">{config.tagline}</p>
@@ -890,7 +890,7 @@ export default function CustomerPage() {
               {/* Modal Header */}
               <div className="flex items-center justify-between pb-4 mb-4 border-b border-neutral-100">
                 <div className="flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-lg bg-[#3F1215] flex items-center justify-center text-white text-[10px] font-bold">
+                  <div className="w-6 h-6 rounded-lg bg-[#0A52A9] flex items-center justify-center text-white text-[10px] font-bold">
                     C
                   </div>
                   <span className="text-sm font-semibold text-neutral-800">
@@ -963,14 +963,14 @@ export default function CustomerPage() {
                   <button
                     type="button"
                     onClick={() => setShowGoogleModal(false)}
-                    className="px-4 py-2.5 rounded-xl border border-[#EBD3C8] text-xs text-neutral-600 hover:bg-neutral-50 cursor-pointer"
+                    className="px-4 py-2.5 rounded-xl border border-[#E6DEBA] text-xs text-neutral-600 hover:bg-neutral-50 cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={googleLoading}
-                    className="flex-1 py-2.5 rounded-xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-xs font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-98"
+                    className="flex-1 py-2.5 rounded-xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-semibold transition-colors disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer shadow-xs active:scale-98"
                   >
                     {googleLoading ? "Signing in..." : "Continue to Loyalty Pass"}
                   </button>
@@ -994,11 +994,11 @@ export default function CustomerPage() {
       <header className="glass-panel border-x-0 border-t-0 rounded-none sticky top-0 z-20 px-4 py-3">
         <div className="max-w-md mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-[#3F1215] flex items-center justify-center text-white overflow-hidden p-0.5 border border-[#3F1215]">
+            <div className="w-9 h-9 rounded-xl bg-[#0A52A9] flex items-center justify-center text-white overflow-hidden p-0.5 border border-[#0A52A9]">
               <img src="/logo.png" alt="jari" className="w-full h-full object-cover rounded-lg" />
             </div>
             <div>
-              <span className="font-semibold text-xs tracking-tight text-[#2B0B0D] block font-serif">
+              <span className="font-semibold text-xs tracking-tight text-[#0B192C] block font-serif">
                 {config.storeName}
               </span>
               <span className="text-[10px] text-neutral-400 font-mono">Digital Loyalty Member</span>
@@ -1027,26 +1027,26 @@ export default function CustomerPage() {
               setActiveTab("notifications");
               markAllRead();
             }}
-            className="mb-4 bg-[#3F1215] text-[#FEECE2] rounded-2xl p-3.5 shadow-lg border border-white/15 flex items-center justify-between gap-3 cursor-pointer hover:bg-[#2B0B0D] transition-all duration-300 animate-in fade-in slide-in-from-top-3"
+            className="mb-4 bg-[#0A52A9] text-[#F4EECF] rounded-2xl p-3.5 shadow-lg border border-white/15 flex items-center justify-between gap-3 cursor-pointer hover:bg-[#073B7A] transition-all duration-300 animate-in fade-in slide-in-from-top-3"
           >
             <div className="flex items-center gap-2.5 min-w-0 flex-1">
-              <div className="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center shrink-0 text-[#FEECE2]">
+              <div className="w-8 h-8 rounded-xl bg-white/15 flex items-center justify-center shrink-0 text-[#F4EECF]">
                 <Bell className="w-4 h-4 animate-bounce" />
               </div>
               <div className="overflow-hidden flex-1">
                 <div className="flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-rose-400 animate-pulse shrink-0" />
-                  <p className="text-xs font-semibold truncate text-[#FEECE2]">
+                  <p className="text-xs font-semibold truncate text-[#F4EECF]">
                     {activeToastNotification.title}
                   </p>
                 </div>
-                <p className="text-[11px] text-[#FEECE2]/80 truncate mt-0.5">
+                <p className="text-[11px] text-[#F4EECF]/80 truncate mt-0.5">
                   {activeToastNotification.message}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-1.5 shrink-0">
-              <span className="text-[10px] font-semibold px-2.5 py-1 rounded-lg bg-white/15 text-[#FEECE2]">
+              <span className="text-[10px] font-semibold px-2.5 py-1 rounded-lg bg-white/15 text-[#F4EECF]">
                 View
               </span>
               <button
@@ -1055,7 +1055,7 @@ export default function CustomerPage() {
                   e.stopPropagation();
                   setShowTopToast(false);
                 }}
-                className="p-1 rounded-lg text-[#FEECE2]/70 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
+                className="p-1 rounded-lg text-[#F4EECF]/70 hover:text-white hover:bg-white/15 transition-colors cursor-pointer"
                 title="Dismiss"
               >
                 <X className="w-4 h-4" />
@@ -1067,14 +1067,14 @@ export default function CustomerPage() {
         {/* Web Push Notification Status & Prompts */}
         {/* State 1: Permission has NOT been granted yet -> Show Enable banner */}
         {pushPermission === "default" && !pushSubscribed && (
-          <div className="mb-4 bg-gradient-to-r from-[#3F1215] to-[#52181C] text-[#FEECE2] rounded-3xl p-4 shadow-md border border-[#3F1215] flex items-center justify-between gap-3">
+          <div className="mb-4 bg-gradient-to-r from-[#0A52A9] to-[#1A69CC] text-[#F4EECF] rounded-3xl p-4 shadow-md border border-[#0A52A9] flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-[#FEECE2]/15 flex items-center justify-center shrink-0 text-[#FEECE2]">
+              <div className="w-10 h-10 rounded-2xl bg-[#F4EECF]/15 flex items-center justify-center shrink-0 text-[#F4EECF]">
                 <Bell className="w-5 h-5" />
               </div>
               <div>
                 <h4 className="text-xs font-bold leading-tight">Enable Push Notifications</h4>
-                <p className="text-[10px] text-[#FEECE2]/80 mt-0.5 leading-snug">
+                <p className="text-[10px] text-[#F4EECF]/80 mt-0.5 leading-snug">
                   Receive instant balance updates and rewards directly on your device
                 </p>
               </div>
@@ -1082,7 +1082,7 @@ export default function CustomerPage() {
             <button
               onClick={handleEnablePush}
               disabled={pushLoading}
-              className="px-4 py-2 rounded-xl bg-[#FEECE2] text-[#3F1215] text-xs font-bold hover:bg-white transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
+              className="px-4 py-2 rounded-xl bg-[#F4EECF] text-[#0A52A9] text-xs font-bold hover:bg-white transition-all shadow-xs cursor-pointer active:scale-95 shrink-0"
             >
               {pushLoading ? "Enabling..." : "Enable"}
             </button>
@@ -1131,7 +1131,7 @@ export default function CustomerPage() {
                       {customer.tier} Tier
                     </span>
                   </div>
-                  <h2 className="text-xl font-medium text-[#2B0B0D] font-serif">
+                  <h2 className="text-xl font-medium text-[#0B192C] font-serif">
                     {customer.name}
                   </h2>
                   <div className="flex items-center gap-1.5 mt-0.5">
@@ -1142,24 +1142,24 @@ export default function CustomerPage() {
                   </div>
                 </div>
 
-                <div className="w-10 h-10 rounded-xl bg-[#3F1215] flex items-center justify-center text-white shadow-xs overflow-hidden p-0.5 border border-[#3F1215]">
+                <div className="w-10 h-10 rounded-xl bg-[#0A52A9] flex items-center justify-center text-white shadow-xs overflow-hidden p-0.5 border border-[#0A52A9]">
                   <img src="/logo.png" alt="jari" className="w-full h-full object-cover rounded-lg" />
                 </div>
               </div>
 
               {/* QR Code Section: Pristine White Box with Subtle Shadow */}
               <div className="my-6 flex flex-col items-center justify-center">
-                <div className="p-4 bg-white rounded-2xl border border-[#EBD3C8] shadow-sm flex items-center justify-center">
+                <div className="p-4 bg-white rounded-2xl border border-[#E6DEBA] shadow-sm flex items-center justify-center">
                   <QRCodeSVG
                     value={customer.qrSecret}
                     size={184}
                     level="H"
                     includeMargin={false}
-                    fgColor="#3F1215"
+                    fgColor="#0A52A9"
                   />
                 </div>
                 <span className="text-[11px] text-neutral-400 font-mono mt-2 flex items-center gap-1">
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#3F1215]" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#0A52A9]" />
                   Dynamic Encrypted QR
                 </span>
               </div>
@@ -1171,13 +1171,13 @@ export default function CustomerPage() {
                 </span>
 
                 <div className="flex items-center justify-center gap-3">
-                  <span className="font-pin text-2xl font-bold tracking-widest text-[#2B0B0D] select-all">
+                  <span className="font-pin text-2xl font-bold tracking-widest text-[#0B192C] select-all">
                     {customer.formattedPin}
                   </span>
 
                   <button
                     onClick={handleCopyPin}
-                    className="p-1.5 rounded-lg border border-[#EBD3C8] bg-white hover:bg-[#FDF4F0] text-neutral-600 transition-colors active:scale-95 cursor-pointer"
+                    className="p-1.5 rounded-lg border border-[#E6DEBA] bg-white hover:bg-[#FDFBF4] text-neutral-600 transition-colors active:scale-95 cursor-pointer"
                     title="Copy PIN"
                   >
                     {copied ? (
@@ -1189,20 +1189,20 @@ export default function CustomerPage() {
                 </div>
 
                 {copied && (
-                  <span className="text-[10px] font-mono text-[#3F1215] mt-1 block">
+                  <span className="text-[10px] font-mono text-[#0A52A9] mt-1 block">
                     Copied to clipboard!
                   </span>
                 )}
               </div>
 
               {/* Live Points Counter */}
-              <div className="mt-6 pt-5 border-t border-[#EBD3C8]/60 flex items-center justify-between">
+              <div className="mt-6 pt-5 border-t border-[#E6DEBA]/60 flex items-center justify-between">
                 <div>
                   <span className="text-[11px] uppercase tracking-wider font-mono text-neutral-400 block mb-0.5">
                     Available Balance
                   </span>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-3xl font-bold tracking-tight text-[#3F1215] font-serif">
+                    <span className="text-3xl font-bold tracking-tight text-[#0A52A9] font-serif">
                       {customer.pointsBalance}
                     </span>
                     <span className="text-xs font-mono text-neutral-500 font-medium">pts</span>
@@ -1213,7 +1213,7 @@ export default function CustomerPage() {
                   <span className="text-[11px] uppercase tracking-wider font-mono text-neutral-400 block mb-0.5">
                     Rewards Status
                   </span>
-                  <span className="inline-block px-2.5 py-1 rounded-lg bg-[#FDF4F0] border border-[#EBD3C8] text-xs font-semibold text-[#3F1215]">
+                  <span className="inline-block px-2.5 py-1 rounded-lg bg-[#FDFBF4] border border-[#E6DEBA] text-xs font-semibold text-[#0A52A9]">
                     {rewards.filter((r) => r.canRedeem).length} Unlocked
                   </span>
                 </div>
@@ -1226,7 +1226,7 @@ export default function CustomerPage() {
               className="w-full glass-panel hover:bg-white/80 rounded-2xl p-4 flex items-center justify-between text-left transition-all shadow-xs cursor-pointer"
             >
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#C87D55] flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-[#0A52A9] flex items-center justify-center">
                   <Gift className="w-5 h-5" />
                 </div>
                 <div>
@@ -1252,13 +1252,13 @@ export default function CustomerPage() {
                 <span className="text-[11px] text-neutral-500 font-medium block">
                   Current Points Balance
                 </span>
-                <span className="text-2xl font-bold text-[#3F1215] font-mono" dir="ltr">
+                <span className="text-2xl font-bold text-[#0A52A9] font-mono" dir="ltr">
                   {customer.pointsBalance.toLocaleString()}{" "}
                   <span className="text-xs font-normal text-neutral-500">pts</span>
                 </span>
               </div>
               <div className="text-end">
-                <span className="text-xs text-[#3F1215] font-semibold bg-[#FDF4F0] border border-[#EBD3C8] px-3 py-1 rounded-full block">
+                <span className="text-xs text-[#0A52A9] font-semibold bg-[#FDFBF4] border border-[#E6DEBA] px-3 py-1 rounded-full block">
                   Redeemable in Store
                 </span>
               </div>
@@ -1275,10 +1275,10 @@ export default function CustomerPage() {
                 return (
                   <div
                     key={reward._id}
-                    className="bg-white border border-[#EBD3C8] rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all group"
+                    className="bg-white border border-[#E6DEBA] rounded-3xl overflow-hidden shadow-xs hover:shadow-md transition-all group"
                   >
                     {/* Top Hero Image Banner */}
-                    <div className="relative h-48 sm:h-52 w-full bg-[#FDF4F0] overflow-hidden">
+                    <div className="relative h-48 sm:h-52 w-full bg-[#FDFBF4] overflow-hidden">
                       {reward.imageUrl ? (
                         <img
                           src={reward.imageUrl}
@@ -1286,13 +1286,13 @@ export default function CustomerPage() {
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#3F1215]/40 bg-[#FDF4F0]">
+                        <div className="w-full h-full flex items-center justify-center text-[#0A52A9]/40 bg-[#FDFBF4]">
                           <Gift className="w-12 h-12" />
                         </div>
                       )}
 
                       {/* Points Badge */}
-                      <div className="absolute top-3.5 end-3.5 w-14 h-14 rounded-full bg-[#3F1215] text-[#FEECE2] border-2 border-white shadow-lg flex flex-col items-center justify-center">
+                      <div className="absolute top-3.5 end-3.5 w-14 h-14 rounded-full bg-[#0A52A9] text-[#F4EECF] border-2 border-white shadow-lg flex flex-col items-center justify-center">
                         <span className="text-base font-extrabold font-mono leading-none">
                           {reward.pointsRequired}
                         </span>
@@ -1302,7 +1302,7 @@ export default function CustomerPage() {
                       </div>
 
                       {/* Category Tag */}
-                      <div className="absolute top-3.5 start-3.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/95 backdrop-blur-xs text-[#3F1215] shadow-xs border border-white/80">
+                      <div className="absolute top-3.5 start-3.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/95 backdrop-blur-xs text-[#0A52A9] shadow-xs border border-white/80">
                         {reward.category === "Drinks"
                           ? "Beverages"
                           : reward.category === "Food"
@@ -1317,20 +1317,20 @@ export default function CustomerPage() {
 
                     {/* Content Section */}
                     <div className="p-4 sm:p-5">
-                      <h4 className="text-base font-bold text-[#2B0B0D] mb-1 leading-snug">
+                      <h4 className="text-base font-bold text-[#0B192C] mb-1 leading-snug">
                         {reward.title}
                       </h4>
                       <p className="text-xs text-neutral-500 mb-4 line-clamp-2 leading-relaxed">
                         {reward.description}
                       </p>
 
-                      <div className="pt-2 border-t border-[#EBD3C8]/60">
+                      <div className="pt-2 border-t border-[#E6DEBA]/60">
                         {canAfford ? (
                           <button
                             onClick={() => {
                               setRedeemingReward(reward);
                             }}
-                            className="w-full py-2.5 rounded-2xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                            className="w-full py-2.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-2 cursor-pointer active:scale-98"
                           >
                             <Gift className="w-4 h-4" />
                             <span>Redeem Reward Now</span>
@@ -1339,11 +1339,11 @@ export default function CustomerPage() {
                           <div className="space-y-1.5 py-1">
                             <div className="flex items-center justify-between text-[11px] text-neutral-500 font-mono">
                               <span>{reward.pointsRequired - customer.pointsBalance} pts needed to unlock</span>
-                              <span className="font-semibold text-[#3F1215]">{progressPercent}%</span>
+                              <span className="font-semibold text-[#0A52A9]">{progressPercent}%</span>
                             </div>
-                            <div className="w-full h-2 bg-[#FAF5F2] border border-[#EBD3C8] rounded-full overflow-hidden">
+                            <div className="w-full h-2 bg-[#F8FAFC] border border-[#E6DEBA] rounded-full overflow-hidden">
                               <div
-                                className="h-full bg-gradient-to-r from-[#8C2E34] to-[#3F1215] rounded-full transition-all duration-500"
+                                className="h-full bg-gradient-to-r from-[#1A69CC] to-[#0A52A9] rounded-full transition-all duration-500"
                                 style={{ width: `${progressPercent}%` }}
                               />
                             </div>
@@ -1360,8 +1360,8 @@ export default function CustomerPage() {
 
         {/* TAB 3: TRANSACTION LEDGER */}
         {activeTab === "history" && (
-          <div className="bg-white border border-[#EBD3C8] rounded-3xl p-5 shadow-sm">
-            <h3 className="text-sm font-semibold text-[#2B0B0D] mb-4 pb-2 border-b border-[#EBD3C8]/60 font-serif">
+          <div className="bg-white border border-[#E6DEBA] rounded-3xl p-5 shadow-sm">
+            <h3 className="text-sm font-semibold text-[#0B192C] mb-4 pb-2 border-b border-[#E6DEBA]/60 font-serif">
               Loyalty Activity Log
             </h3>
 
@@ -1370,7 +1370,7 @@ export default function CustomerPage() {
                 No recorded transactions yet.
               </div>
             ) : (
-              <div className="divide-y divide-[#EBD3C8]/50">
+              <div className="divide-y divide-[#E6DEBA]/50">
                 {transactions.map((tx) => (
                   <div key={tx._id} className="py-3.5 flex items-start justify-between gap-3">
                     <div>
@@ -1378,7 +1378,7 @@ export default function CustomerPage() {
                         <span
                           className={`text-[10px] font-mono px-1.5 py-0.5 rounded font-medium ${
                             tx.type === "EARN"
-                              ? "bg-[#FDF4F0] text-[#3F1215] border border-[#EBD3C8]"
+                              ? "bg-[#FDFBF4] text-[#0A52A9] border border-[#E6DEBA]"
                               : "bg-amber-50 text-amber-900 border border-amber-200"
                           }`}
                         >
@@ -1387,7 +1387,7 @@ export default function CustomerPage() {
                         <span className="text-xs font-mono text-neutral-400">{tx.referenceCode}</span>
                       </div>
 
-                      <div className="text-xs font-medium text-[#2B0B0D]">
+                      <div className="text-xs font-medium text-[#0B192C]">
                         {tx.rewardTitle || tx.notes || "Store Purchase"}
                       </div>
 
@@ -1405,7 +1405,7 @@ export default function CustomerPage() {
                     <div className="text-right flex-shrink-0">
                       <span
                         className={`text-sm font-bold font-mono ${
-                          tx.points > 0 ? "text-[#3F1215]" : "text-neutral-800"
+                          tx.points > 0 ? "text-[#0A52A9]" : "text-neutral-800"
                         }`}
                       >
                         {tx.points > 0 ? `+${tx.points}` : tx.points} pts
@@ -1424,10 +1424,10 @@ export default function CustomerPage() {
         {/* TAB 4: IN-APP NOTIFICATIONS */}
         {activeTab === "notifications" && (
           <div className="space-y-3">
-            <div className="bg-white border border-[#EBD3C8] rounded-3xl p-5 shadow-sm">
-              <div className="flex items-center justify-between pb-3 border-b border-[#EBD3C8]/60">
+            <div className="bg-white border border-[#E6DEBA] rounded-3xl p-5 shadow-sm">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E6DEBA]/60">
                 <div>
-                  <h3 className="text-sm font-semibold text-[#2B0B0D] font-serif">Notification Center</h3>
+                  <h3 className="text-sm font-semibold text-[#0B192C] font-serif">Notification Center</h3>
                   <span className="text-[11px] text-neutral-400 font-mono">
                     {unreadCount > 0 ? `${unreadCount} unread update${unreadCount > 1 ? "s" : ""}` : "All caught up"}
                   </span>
@@ -1435,7 +1435,7 @@ export default function CustomerPage() {
                 {unreadCount > 0 && (
                   <button
                     onClick={markAllRead}
-                    className="text-xs font-mono text-[#3F1215] hover:text-[#2B0B0D] font-semibold flex items-center gap-1 py-1 px-2.5 rounded-lg bg-[#FAF5F2] border border-[#EBD3C8] transition-colors cursor-pointer"
+                    className="text-xs font-mono text-[#0A52A9] hover:text-[#073B7A] font-semibold flex items-center gap-1 py-1 px-2.5 rounded-lg bg-[#F8FAFC] border border-[#E6DEBA] transition-colors cursor-pointer"
                   >
                     <CheckCheck className="w-3.5 h-3.5" />
                     <span>Mark all read</span>
@@ -1445,7 +1445,7 @@ export default function CustomerPage() {
 
               {notifications.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-12 h-12 rounded-2xl bg-[#FAF5F2] border border-[#EBD3C8] text-neutral-400 flex items-center justify-center mx-auto mb-3">
+                  <div className="w-12 h-12 rounded-2xl bg-[#F8FAFC] border border-[#E6DEBA] text-neutral-400 flex items-center justify-center mx-auto mb-3">
                     <Bell className="w-5 h-5" />
                   </div>
                   <p className="text-xs font-medium text-neutral-600">No notifications yet</p>
@@ -1463,8 +1463,8 @@ export default function CustomerPage() {
                         key={n._id}
                         className={`p-3.5 rounded-2xl border transition-all ${
                           !n.isRead
-                            ? "bg-[#FAF5F2]/90 border-[#3F1215]/30 shadow-2xs"
-                            : "bg-white border-[#EBD3C8]/70"
+                            ? "bg-[#F8FAFC]/90 border-[#0A52A9]/30 shadow-2xs"
+                            : "bg-white border-[#E6DEBA]/70"
                         }`}
                       >
                         <div className="flex items-start gap-3">
@@ -1472,7 +1472,7 @@ export default function CustomerPage() {
                             isReward
                               ? "bg-amber-50 text-amber-900 border border-amber-200"
                               : isPoints
-                              ? "bg-[#FDF4F0] text-[#3F1215] border border-[#EBD3C8]"
+                              ? "bg-[#FDFBF4] text-[#0A52A9] border border-[#E6DEBA]"
                               : "bg-neutral-100 text-neutral-600 border border-neutral-200"
                           }`}>
                             {isReward ? (
@@ -1485,7 +1485,7 @@ export default function CustomerPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-2 mb-1">
-                              <span className="text-xs font-bold text-[#2B0B0D] truncate font-serif">
+                              <span className="text-xs font-bold text-[#0B192C] truncate font-serif">
                                 {n.title}
                               </span>
                               <span className="text-[10px] font-mono text-neutral-400 shrink-0">
@@ -1502,7 +1502,7 @@ export default function CustomerPage() {
                             </p>
                           </div>
                           {!n.isRead && (
-                            <span className="w-2 h-2 rounded-full bg-[#3F1215] shrink-0 mt-1.5" />
+                            <span className="w-2 h-2 rounded-full bg-[#0A52A9] shrink-0 mt-1.5" />
                           )}
                         </div>
                       </div>
@@ -1517,12 +1517,12 @@ export default function CustomerPage() {
 
       {/* Floating Semi-Rounded Glassmorphism Navigation Bar */}
       <nav className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] left-0 right-0 z-50 px-4 pointer-events-none flex justify-center">
-        <div className="w-full max-w-sm glass-nav rounded-full p-1.5 shadow-[0_16px_40px_-8px_rgba(63,18,21,0.22),0_4px_16px_rgba(0,0,0,0.08)] border border-white/90 pointer-events-auto flex items-center justify-between gap-1">
+        <div className="w-full max-w-sm glass-nav rounded-full p-1.5 shadow-[0_16px_40px_-8px_rgba(10, 82, 169, 0.22),0_4px_16px_rgba(0,0,0,0.08)] border border-white/90 pointer-events-auto flex items-center justify-between gap-1">
           <button
             onClick={() => setActiveTab("card")}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer ${
               activeTab === "card"
-                ? "bg-[#3F1215] text-[#FEECE2] shadow-sm font-semibold scale-102"
+                ? "bg-[#0A52A9] text-[#F4EECF] shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1534,7 +1534,7 @@ export default function CustomerPage() {
             onClick={() => setActiveTab("rewards")}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer ${
               activeTab === "rewards"
-                ? "bg-[#3F1215] text-[#FEECE2] shadow-sm font-semibold scale-102"
+                ? "bg-[#0A52A9] text-[#F4EECF] shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1546,7 +1546,7 @@ export default function CustomerPage() {
             onClick={() => setActiveTab("history")}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer ${
               activeTab === "history"
-                ? "bg-[#3F1215] text-[#FEECE2] shadow-sm font-semibold scale-102"
+                ? "bg-[#0A52A9] text-[#F4EECF] shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1561,7 +1561,7 @@ export default function CustomerPage() {
             }}
             className={`flex-1 flex flex-col items-center justify-center py-2 px-1 rounded-full transition-all duration-300 cursor-pointer relative ${
               activeTab === "notifications"
-                ? "bg-[#3F1215] text-[#FEECE2] shadow-sm font-semibold scale-102"
+                ? "bg-[#0A52A9] text-[#F4EECF] shadow-sm font-semibold scale-102"
                 : "text-neutral-500 hover:text-neutral-900 hover:bg-white/40"
             }`}
           >
@@ -1582,10 +1582,10 @@ export default function CustomerPage() {
           <div className="glass-panel rounded-3xl p-6 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-[#FAF5F2] border border-[#EBD3C8] flex items-center justify-center text-[#3F1215]">
+                <div className="w-7 h-7 rounded-xl bg-[#F8FAFC] border border-[#E6DEBA] flex items-center justify-center text-[#0A52A9]">
                   <Gift className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-semibold text-[#2B0B0D] font-serif">Redeem Reward</h3>
+                <h3 className="text-sm font-semibold text-[#0B192C] font-serif">Redeem Reward</h3>
               </div>
               <button
                 onClick={() => setRedeemingReward(null)}
@@ -1596,9 +1596,9 @@ export default function CustomerPage() {
             </div>
 
             {/* Reward Card Summary */}
-            <div className="glass-panel-subtle rounded-2xl overflow-hidden mb-4 border border-[#EBD3C8]">
+            <div className="glass-panel-subtle rounded-2xl overflow-hidden mb-4 border border-[#E6DEBA]">
               {redeemingReward.imageUrl && (
-                <div className="w-full h-32 overflow-hidden border-b border-[#EBD3C8]">
+                <div className="w-full h-32 overflow-hidden border-b border-[#E6DEBA]">
                   <img
                     src={redeemingReward.imageUrl}
                     alt={redeemingReward.title}
@@ -1610,26 +1610,26 @@ export default function CustomerPage() {
                 <span className="text-[10px] font-mono uppercase text-neutral-400 block mb-0.5">
                   {redeemingReward.category}
                 </span>
-                <h4 className="text-sm font-bold text-[#2B0B0D]">{redeemingReward.title}</h4>
-                <div className="mt-2 pt-2 border-t border-[#EBD3C8] flex justify-between items-center text-xs">
+                <h4 className="text-sm font-bold text-[#0B192C]">{redeemingReward.title}</h4>
+                <div className="mt-2 pt-2 border-t border-[#E6DEBA] flex justify-between items-center text-xs">
                   <span className="text-neutral-500 font-mono">Points Value:</span>
-                  <span className="font-bold font-mono text-[#3F1215]">{redeemingReward.pointsRequired} pts</span>
+                  <span className="font-bold font-mono text-[#0A52A9]">{redeemingReward.pointsRequired} pts</span>
                 </div>
               </div>
             </div>
 
             {/* Prominent Counter Code Box */}
-            <div className="glass-panel-subtle border-2 border-[#3F1215]/30 rounded-2xl p-4 mb-3 text-center shadow-xs">
+            <div className="glass-panel-subtle border-2 border-[#0A52A9]/30 rounded-2xl p-4 mb-3 text-center shadow-xs">
               <span className="text-[10px] uppercase tracking-wider font-mono text-neutral-400 block mb-1">
                 Give this 6-Digit Code to Cashier
               </span>
               <div className="flex items-center justify-center gap-3">
-                <span className="font-pin text-3xl font-bold tracking-widest text-[#3F1215] select-all">
+                <span className="font-pin text-3xl font-bold tracking-widest text-[#0A52A9] select-all">
                   {customer.formattedPin}
                 </span>
                 <button
                   onClick={handleCopyPin}
-                  className="p-1.5 rounded-lg border border-[#EBD3C8] bg-white/80 hover:bg-[#FDF4F0] text-neutral-600 transition-colors active:scale-95 cursor-pointer"
+                  className="p-1.5 rounded-lg border border-[#E6DEBA] bg-white/80 hover:bg-[#FDFBF4] text-neutral-600 transition-colors active:scale-95 cursor-pointer"
                   title="Copy PIN"
                 >
                   {copied ? (
@@ -1640,7 +1640,7 @@ export default function CustomerPage() {
                 </button>
               </div>
               {copied && (
-                <span className="text-[10px] font-mono text-[#3F1215] mt-1 block">
+                <span className="text-[10px] font-mono text-[#0A52A9] mt-1 block">
                   Copied to clipboard!
                 </span>
               )}
@@ -1648,13 +1648,13 @@ export default function CustomerPage() {
 
             {/* QR Code Presentation */}
             <div className="flex flex-col items-center justify-center mb-4">
-              <div className="p-2.5 bg-white rounded-xl border border-[#EBD3C8] shadow-2xs">
+              <div className="p-2.5 bg-white rounded-xl border border-[#E6DEBA] shadow-2xs">
                 <QRCodeSVG
                   value={customer.qrSecret}
                   size={120}
                   level="H"
                   includeMargin={false}
-                  fgColor="#3F1215"
+                  fgColor="#0A52A9"
                 />
               </div>
               <span className="text-[10px] text-neutral-400 font-mono mt-1.5">
@@ -1672,7 +1672,7 @@ export default function CustomerPage() {
 
             <button
               onClick={() => setRedeemingReward(null)}
-              className="w-full py-3 rounded-2xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-98"
+              className="w-full py-3 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-semibold transition-all shadow-xs cursor-pointer active:scale-98"
             >
               Done & Return to Pass
             </button>
@@ -1683,32 +1683,32 @@ export default function CustomerPage() {
       {/* MODAL: iOS Add to Home Screen Guidance */}
       {showIosInstallModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white border border-[#EBD3C8] rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
-            <div className="w-12 h-12 rounded-full bg-[#FAF5F2] border border-[#EBD3C8] text-[#3F1215] flex items-center justify-center mx-auto mb-3">
+          <div className="bg-white border border-[#E6DEBA] rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center">
+            <div className="w-12 h-12 rounded-full bg-[#F8FAFC] border border-[#E6DEBA] text-[#0A52A9] flex items-center justify-center mx-auto mb-3">
               <Bell className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-[#2B0B0D] mb-1">
+            <h3 className="text-base font-bold text-[#0B192C] mb-1">
               Enable Notifications on iPhone
             </h3>
             <p className="text-xs text-neutral-500 mb-5 leading-relaxed">
               Apple requires adding the app to your Home Screen first to receive lock screen notifications:
             </p>
 
-            <div className="bg-[#FAF5F2] border border-[#EBD3C8] rounded-2xl p-4 text-start space-y-3 mb-5 text-xs text-[#2B0B0D]">
+            <div className="bg-[#F8FAFC] border border-[#E6DEBA] rounded-2xl p-4 text-start space-y-3 mb-5 text-xs text-[#0B192C]">
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
                   1
                 </span>
                 <span>Tap the Share button <strong>⎋ (Share)</strong> in Safari&apos;s bottom toolbar.</span>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
                   2
                 </span>
                 <span>Choose <strong>&quot;Add to Home Screen&quot;</strong>.</span>
               </div>
               <div className="flex items-start gap-2.5">
-                <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] font-bold text-[10px] flex items-center justify-center flex-shrink-0 mt-0.5">
                   3
                 </span>
                 <span>Open <strong>jari</strong> from your home screen and tap &quot;Enable&quot;.</span>
@@ -1717,7 +1717,7 @@ export default function CustomerPage() {
 
             <button
               onClick={() => setShowIosInstallModal(false)}
-              className="w-full py-2.5 rounded-xl bg-[#3F1215] text-[#FEECE2] text-xs font-semibold hover:bg-[#2B0B0D] transition-colors cursor-pointer"
+              className="w-full py-2.5 rounded-xl bg-[#0A52A9] text-[#F4EECF] text-xs font-semibold hover:bg-[#073B7A] transition-colors cursor-pointer"
             >
               Got it, thanks
             </button>
@@ -1739,16 +1739,16 @@ export default function CustomerPage() {
             </button>
 
             <div className="flex items-start gap-3">
-              <div className="w-12 h-12 rounded-2xl bg-[#3F1215] flex items-center justify-center text-white shrink-0 overflow-hidden p-0.5 border border-[#3F1215]/30 shadow-md">
+              <div className="w-12 h-12 rounded-2xl bg-[#0A52A9] flex items-center justify-center text-white shrink-0 overflow-hidden p-0.5 border border-[#0A52A9]/30 shadow-md">
                 <img src="/logo.png" alt="jari" className="w-full h-full object-cover rounded-xl" />
               </div>
 
               <div className="flex-1 min-w-0 pr-3">
                 <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="font-bold text-xs sm:text-sm text-[#2B0B0D]">
+                  <span className="font-bold text-xs sm:text-sm text-[#0B192C]">
                     Install {config.storeName}
                   </span>
-                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#FAF5F2] text-[#3F1215] border border-[#EBD3C8]">
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-md bg-[#F8FAFC] text-[#0A52A9] border border-[#E6DEBA]">
                     1-Tap
                   </span>
                 </div>
@@ -1760,7 +1760,7 @@ export default function CustomerPage() {
                   <button
                     type="button"
                     onClick={handleAndroidInstallClick}
-                    className="flex-1 py-2 px-3 rounded-xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+                    className="flex-1 py-2 px-3 rounded-xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-xs font-bold transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
                   >
                     <Smartphone className="w-3.5 h-3.5" />
                     <span>Install Now</span>
@@ -1784,11 +1784,11 @@ export default function CustomerPage() {
       {showPhoneModal && (
         <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 select-none">
           <div className="glass-panel rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-white/95 relative animate-in fade-in zoom-in-95 duration-200">
-            <div className="w-14 h-14 rounded-2xl bg-[#3F1215] text-[#FEECE2] flex items-center justify-center mx-auto mb-4 shadow-lg border border-[#3F1215]/20">
-              <Phone className="w-7 h-7 text-[#FEECE2]" />
+            <div className="w-14 h-14 rounded-2xl bg-[#0A52A9] text-[#F4EECF] flex items-center justify-center mx-auto mb-4 shadow-lg border border-[#0A52A9]/20">
+              <Phone className="w-7 h-7 text-[#F4EECF]" />
             </div>
 
-            <h2 className="text-xl font-bold text-center text-[#2B0B0D] mb-1">
+            <h2 className="text-xl font-bold text-center text-[#0B192C] mb-1">
               Link Mobile Number
             </h2>
             <p className="text-xs text-neutral-500 text-center mb-5 leading-relaxed">
@@ -1804,7 +1804,7 @@ export default function CustomerPage() {
 
             <form onSubmit={handleSavePhone} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#2B0B0D] mb-1.5">
+                <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
                   Jordanian Phone (10 digits)
                 </label>
                 <div className="relative flex items-center">
@@ -1858,7 +1858,7 @@ export default function CustomerPage() {
               <button
                 type="submit"
                 disabled={!isPhoneValid || phoneSaving}
-                className="w-full py-3.5 rounded-2xl bg-[#3F1215] text-[#FEECE2] text-sm font-bold hover:bg-[#2B0B0D] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+                className="w-full py-3.5 rounded-2xl bg-[#0A52A9] text-[#F4EECF] text-sm font-bold hover:bg-[#073B7A] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-md flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 {phoneSaving ? (
                   <span>Saving & Activating...</span>

@@ -357,8 +357,8 @@ export default function CashierPage() {
 
   if (loadingSession) {
     return (
-      <div className="min-h-screen bg-[#FAF5F2] flex items-center justify-center">
-        <div className="w-8 h-8 rounded-full border-2 border-neutral-300 border-t-[#3F1215] animate-spin" />
+      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center">
+        <div className="w-8 h-8 rounded-full border-2 border-neutral-300 border-t-[#0A52A9] animate-spin" />
       </div>
     );
   }
@@ -368,13 +368,13 @@ export default function CashierPage() {
   // ==========================================
   if (!cashier) {
     return (
-      <div className="min-h-screen bg-[#FAF5F2] flex flex-col justify-between p-4 sm:p-6 select-none font-sans">
+      <div className="min-h-screen bg-[#F8FAFC] flex flex-col justify-between p-4 sm:p-6 select-none font-sans">
         <div className="max-w-sm w-full mx-auto my-auto py-4">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-[#3F1215] flex items-center justify-center mx-auto mb-3 shadow-md border border-[#3F1215]/20 overflow-hidden p-0.5">
+            <div className="w-16 h-16 rounded-2xl bg-[#0A52A9] flex items-center justify-center mx-auto mb-3 shadow-md border border-[#0A52A9]/20 overflow-hidden p-0.5">
               <img src="/logo.png" alt="jari" className="w-full h-full object-cover rounded-xl" />
             </div>
-            <h1 className="text-2xl font-bold text-[#2B0B0D] mb-1">
+            <h1 className="text-2xl font-bold text-[#0B192C] mb-1">
               Cashier Terminal
             </h1>
             <p className="text-xs text-neutral-500 font-medium">
@@ -392,7 +392,7 @@ export default function CashierPage() {
 
             <form onSubmit={handleCashierLogin} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-[#2B0B0D] mb-1.5">
+                <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
                   Cashier Username
                 </label>
                 <input
@@ -406,7 +406,7 @@ export default function CashierPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#2B0B0D] mb-1.5">
+                <label className="block text-xs font-semibold text-[#0B192C] mb-1.5">
                   Staff Security PIN
                 </label>
                 <input
@@ -423,7 +423,7 @@ export default function CashierPage() {
               <button
                 type="submit"
                 disabled={loginLoading}
-                className="w-full py-3.5 rounded-xl bg-[#3F1215] text-[#FEECE2] text-sm font-bold hover:bg-[#2B0B0D] transition-all disabled:opacity-50 mt-2 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98"
+                className="w-full py-3.5 rounded-xl bg-[#0A52A9] text-[#F4EECF] text-sm font-bold hover:bg-[#073B7A] transition-all disabled:opacity-50 mt-2 flex items-center justify-center gap-2 cursor-pointer shadow-sm active:scale-98"
               >
                 {loginLoading ? "Signing in..." : "Open POS Terminal"}
                 <ArrowRight className="w-4 h-4" />
@@ -433,20 +433,20 @@ export default function CashierPage() {
 
           {/* Install Cashier App to Home Screen Banner */}
           {!isStandaloneApp && (
-            <div className="mt-4 p-3.5 rounded-2xl glass-panel-subtle border border-[#EBD3C8] shadow-2xs flex items-center justify-between gap-3">
+            <div className="mt-4 p-3.5 rounded-2xl glass-panel-subtle border border-[#E6DEBA] shadow-2xs flex items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-8 h-8 rounded-xl bg-[#FDF4F0] text-[#3F1215] flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-[#FDFBF4] text-[#0A52A9] flex items-center justify-center shrink-0">
                   <Smartphone className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-semibold text-[#2B0B0D] truncate">Add Cashier to Home Screen</p>
+                  <p className="text-xs font-semibold text-[#0B192C] truncate">Add Cashier to Home Screen</p>
                   <p className="text-[10px] text-neutral-500 truncate">Launches Cashier directly, never Customer</p>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className="px-3 py-1.5 rounded-xl bg-[#3F1215] text-[#FEECE2] text-xs font-bold shrink-0 hover:bg-[#2B0B0D] transition-all cursor-pointer shadow-2xs"
+                className="px-3 py-1.5 rounded-xl bg-[#0A52A9] text-[#F4EECF] text-xs font-bold shrink-0 hover:bg-[#073B7A] transition-all cursor-pointer shadow-2xs"
               >
                 Install
               </button>
@@ -466,28 +466,28 @@ export default function CashierPage() {
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-12 h-12 rounded-2xl bg-[#3F1215] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+              <div className="w-12 h-12 rounded-2xl bg-[#0A52A9] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
                 <Smartphone className="w-6 h-6" />
               </div>
 
-              <h3 className="text-base font-bold text-center text-[#2B0B0D] mb-1">
+              <h3 className="text-base font-bold text-center text-[#0B192C] mb-1">
                 Install Cashier to Home Screen
               </h3>
               <p className="text-xs text-neutral-500 text-center mb-4">
                 Install a dedicated Cashier POS icon that opens this terminal directly:
               </p>
 
-              <div className="space-y-3 glass-panel-subtle rounded-2xl p-4 text-xs text-[#2B0B0D]">
+              <div className="space-y-3 glass-panel-subtle rounded-2xl p-4 text-xs text-[#0B192C]">
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-                  <span>Tap the <strong>Share</strong> button <Share2 className="w-3.5 h-3.5 inline mx-0.5 text-[#3F1215]" /> in Safari or <strong>Menu (⋮)</strong> in Chrome.</span>
+                  <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                  <span>Tap the <strong>Share</strong> button <Share2 className="w-3.5 h-3.5 inline mx-0.5 text-[#0A52A9]" /> in Safari or <strong>Menu (⋮)</strong> in Chrome.</span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                  <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
                   <span>Select <strong>&quot;Add to Home Screen&quot;</strong>.</span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                  <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
                   <span>Tap <strong>Add</strong>. The icon will be named <strong>jari Cashier</strong> and will open this Cashier POS terminal directly.</span>
                 </div>
               </div>
@@ -495,7 +495,7 @@ export default function CashierPage() {
               <button
                 type="button"
                 onClick={() => setShowInstallGuide(false)}
-                className="w-full mt-4 py-2.5 rounded-xl bg-[#3F1215] text-[#FEECE2] text-xs font-bold hover:bg-[#2B0B0D] transition-colors cursor-pointer"
+                className="w-full mt-4 py-2.5 rounded-xl bg-[#0A52A9] text-[#F4EECF] text-xs font-bold hover:bg-[#073B7A] transition-colors cursor-pointer"
               >
                 Got It
               </button>
@@ -504,11 +504,11 @@ export default function CashierPage() {
         )}
 
         <div className="text-center text-xs text-neutral-500 py-4 flex items-center justify-center gap-4">
-          <Link href="/admin" className="hover:text-[#3F1215] font-medium transition-colors">
+          <Link href="/admin" className="hover:text-[#0A52A9] font-medium transition-colors">
             Admin Console
           </Link>
           <span className="text-neutral-300">•</span>
-          <Link href="/customer" className="hover:text-[#3F1215] font-medium transition-colors">
+          <Link href="/customer" className="hover:text-[#0A52A9] font-medium transition-colors">
             Customer Pass
           </Link>
         </div>
@@ -520,18 +520,18 @@ export default function CashierPage() {
   // Cashier POS Checkout Interface (English)
   // ==========================================
   return (
-    <div className="min-h-screen bg-[#FAF5F2]/80 backdrop-blur-md flex flex-col justify-between select-none font-sans">
+    <div className="min-h-screen bg-[#F8FAFC]/80 backdrop-blur-md flex flex-col justify-between select-none font-sans">
       {/* Top Header - Super Compact & Clean on Mobile */}
       <header className="glass-panel border-x-0 border-t-0 rounded-none px-3.5 sm:px-6 py-2.5 sm:py-3 sticky top-0 z-20 shadow-xs">
         <div className="max-w-2xl mx-auto flex items-center justify-between gap-2">
           {/* Cashier Info */}
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#3F1215] flex items-center justify-center text-white shrink-0 overflow-hidden p-0.5 border border-[#3F1215]/20">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#0A52A9] flex items-center justify-center text-white shrink-0 overflow-hidden p-0.5 border border-[#0A52A9]/20">
               <img src="/logo.png" alt="jari" className="w-full h-full object-cover rounded-lg" />
             </div>
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="font-bold text-xs sm:text-sm text-[#2B0B0D] truncate">
+                <span className="font-bold text-xs sm:text-sm text-[#0B192C] truncate">
                   {config.storeName} Cashier
                 </span>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Online" />
@@ -548,19 +548,19 @@ export default function CashierPage() {
               <button
                 type="button"
                 onClick={handleInstallClick}
-                className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-[#EBD3C8] glass-panel-subtle hover:bg-white text-xs font-semibold text-[#3F1215] flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-[#E6DEBA] glass-panel-subtle hover:bg-white text-xs font-semibold text-[#0A52A9] flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
                 title="Install Cashier POS App"
               >
-                <Smartphone className="w-3.5 h-3.5 text-[#3F1215]" />
+                <Smartphone className="w-3.5 h-3.5 text-[#0A52A9]" />
                 <span className="text-xs">Install</span>
               </button>
             )}
 
             <button
               onClick={resetPOS}
-              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-[#EBD3C8] glass-panel-subtle hover:bg-white text-xs font-semibold text-[#2B0B0D] flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
+              className="px-2.5 sm:px-3 py-1.5 rounded-xl border border-[#E6DEBA] glass-panel-subtle hover:bg-white text-xs font-semibold text-[#0B192C] flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer shadow-2xs"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-[#3F1215]" />
+              <RefreshCw className="w-3.5 h-3.5 text-[#0A52A9]" />
               <span className="text-xs">Reset</span>
             </button>
 
@@ -583,7 +583,7 @@ export default function CashierPage() {
         {!identifiedCustomer && (
           <div className="w-full max-w-md mx-auto space-y-3.5">
             {/* Mode Switcher Buttons */}
-            <div className="grid grid-cols-2 gap-2 glass-panel-subtle p-1 rounded-2xl border border-[#EBD3C8]/60">
+            <div className="grid grid-cols-2 gap-2 glass-panel-subtle p-1 rounded-2xl border border-[#E6DEBA]/60">
               <button
                 type="button"
                 onClick={() => {
@@ -592,7 +592,7 @@ export default function CashierPage() {
                 }}
                 className={`py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   activeMode === "pin"
-                    ? "bg-[#3F1215] text-[#FEECE2] shadow-xs"
+                    ? "bg-[#0A52A9] text-[#F4EECF] shadow-xs"
                     : "text-neutral-600 hover:text-neutral-900"
                 }`}
               >
@@ -609,7 +609,7 @@ export default function CashierPage() {
                 }}
                 className={`py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer ${
                   activeMode === "qr"
-                    ? "bg-[#3F1215] text-[#FEECE2] shadow-xs"
+                    ? "bg-[#0A52A9] text-[#F4EECF] shadow-xs"
                     : "text-neutral-600 hover:text-neutral-900"
                 }`}
               >
@@ -643,10 +643,10 @@ export default function CashierPage() {
                           key={idx}
                           className={`w-10 h-12 sm:w-12 sm:h-14 rounded-xl border-2 flex items-center justify-center text-xl font-bold font-mono transition-all ${
                             char
-                              ? "border-[#3F1215] bg-[#FDF4F0] text-[#3F1215]"
+                              ? "border-[#0A52A9] bg-[#FDFBF4] text-[#0A52A9]"
                               : idx === pinQuery.length
-                              ? "border-[#3F1215] bg-white animate-pulse"
-                              : "border-[#EBD3C8] bg-[#FAF5F2]/50 text-neutral-300"
+                              ? "border-[#0A52A9] bg-white animate-pulse"
+                              : "border-[#E6DEBA] bg-[#F8FAFC]/50 text-neutral-300"
                           }`}
                         >
                           {char || "•"}
@@ -664,7 +664,7 @@ export default function CashierPage() {
                       type="button"
                       onClick={() => handleKeypadPress(num)}
                       disabled={lookupLoading}
-                      className="h-12 sm:h-13 rounded-2xl glass-panel-subtle hover:bg-white/90 active:scale-95 text-[#2B0B0D] font-bold text-lg font-mono flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                      className="h-12 sm:h-13 rounded-2xl glass-panel-subtle hover:bg-white/90 active:scale-95 text-[#0B192C] font-bold text-lg font-mono flex items-center justify-center transition-all cursor-pointer shadow-2xs"
                     >
                       {num}
                     </button>
@@ -680,7 +680,7 @@ export default function CashierPage() {
                     type="button"
                     onClick={() => handleKeypadPress("0")}
                     disabled={lookupLoading}
-                    className="h-12 sm:h-13 rounded-2xl glass-panel-subtle hover:bg-white/90 active:scale-95 text-[#2B0B0D] font-bold text-lg font-mono flex items-center justify-center transition-all cursor-pointer shadow-2xs"
+                    className="h-12 sm:h-13 rounded-2xl glass-panel-subtle hover:bg-white/90 active:scale-95 text-[#0B192C] font-bold text-lg font-mono flex items-center justify-center transition-all cursor-pointer shadow-2xs"
                   >
                     0
                   </button>
@@ -698,7 +698,7 @@ export default function CashierPage() {
                   type="button"
                   onClick={() => performLookup(pinQuery)}
                   disabled={lookupLoading || pinQuery.length < 6}
-                  className="w-full py-3.5 rounded-2xl bg-[#3F1215] text-[#FEECE2] text-sm font-bold hover:bg-[#2B0B0D] transition-all disabled:opacity-40 cursor-pointer shadow-xs flex items-center justify-center gap-2 active:scale-98"
+                  className="w-full py-3.5 rounded-2xl bg-[#0A52A9] text-[#F4EECF] text-sm font-bold hover:bg-[#073B7A] transition-all disabled:opacity-40 cursor-pointer shadow-xs flex items-center justify-center gap-2 active:scale-98"
                 >
                   {lookupLoading ? (
                     <>
@@ -718,12 +718,12 @@ export default function CashierPage() {
             {/* MODE 2: QR SCANNER BUTTON & MANUAL TOKEN */}
             {activeMode === "qr" && (
               <div className="glass-panel rounded-3xl p-5 sm:p-6 shadow-lg space-y-4 text-center">
-                <div className="w-16 h-16 rounded-full bg-[#FDF4F0] border border-[#EBD3C8] text-[#3F1215] flex items-center justify-center mx-auto">
+                <div className="w-16 h-16 rounded-full bg-[#FDFBF4] border border-[#E6DEBA] text-[#0A52A9] flex items-center justify-center mx-auto">
                   <ScanLine className="w-8 h-8 animate-pulse" />
                 </div>
 
                 <div>
-                  <h3 className="font-bold text-[#2B0B0D] text-sm sm:text-base mb-1">
+                  <h3 className="font-bold text-[#0B192C] text-sm sm:text-base mb-1">
                     Scan QR Code
                   </h3>
                   <p className="text-xs text-neutral-500 max-w-xs mx-auto">
@@ -734,16 +734,16 @@ export default function CashierPage() {
                 <button
                   type="button"
                   onClick={() => setShowCameraScanner(true)}
-                  className="w-full py-4 px-4 rounded-2xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-sm font-bold flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-98 cursor-pointer"
+                  className="w-full py-4 px-4 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-sm font-bold flex items-center justify-center gap-2.5 transition-all shadow-md active:scale-98 cursor-pointer"
                 >
-                  <Camera className="w-5 h-5 text-[#FEECE2]" />
+                  <Camera className="w-5 h-5 text-[#F4EECF]" />
                   <span>Open Camera for Live Scan</span>
                 </button>
 
                 <div className="relative flex py-1 items-center">
-                  <div className="flex-grow border-t border-[#EBD3C8]"></div>
+                  <div className="flex-grow border-t border-[#E6DEBA]"></div>
                   <span className="shrink mx-3 text-neutral-400 text-[11px]">Or enter code manually</span>
-                  <div className="flex-grow border-t border-[#EBD3C8]"></div>
+                  <div className="flex-grow border-t border-[#E6DEBA]"></div>
                 </div>
 
                 <div className="flex gap-2">
@@ -758,7 +758,7 @@ export default function CashierPage() {
                     type="button"
                     onClick={() => performLookup(qrQuery)}
                     disabled={lookupLoading || !qrQuery}
-                    className="px-4 py-2.5 rounded-xl bg-[#3F1215] text-[#FEECE2] text-xs font-bold hover:bg-[#2B0B0D] transition-colors disabled:opacity-40 cursor-pointer shrink-0"
+                    className="px-4 py-2.5 rounded-xl bg-[#0A52A9] text-[#F4EECF] text-xs font-bold hover:bg-[#073B7A] transition-colors disabled:opacity-40 cursor-pointer shrink-0"
                   >
                     {lookupLoading ? "Checking..." : "Confirm"}
                   </button>
@@ -777,12 +777,12 @@ export default function CashierPage() {
             <div className="glass-panel rounded-3xl p-4 sm:p-5 shadow-lg">
               <div className="flex items-center justify-between gap-3 mb-3">
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-12 h-12 rounded-2xl bg-[#FDF4F0] border border-[#EBD3C8] flex items-center justify-center text-[#3F1215] text-xl font-bold shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-[#FDFBF4] border border-[#E6DEBA] flex items-center justify-center text-[#0A52A9] text-xl font-bold shrink-0">
                     {identifiedCustomer.name.charAt(0)}
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="text-base sm:text-lg font-bold text-[#2B0B0D] truncate">
+                      <h3 className="text-base sm:text-lg font-bold text-[#0B192C] truncate">
                         {identifiedCustomer.name}
                       </h3>
                       <span
@@ -791,7 +791,7 @@ export default function CashierPage() {
                             ? "bg-amber-50 text-amber-900 border-amber-300"
                             : identifiedCustomer.tier === "Silver"
                             ? "bg-slate-100 text-slate-800 border-slate-300"
-                            : "bg-[#FDF4F0] text-[#3F1215] border-[#EBD3C8]"
+                            : "bg-[#FDFBF4] text-[#0A52A9] border-[#E6DEBA]"
                         }`}
                       >
                         {identifiedCustomer.tier}
@@ -805,7 +805,7 @@ export default function CashierPage() {
 
                 <button
                   onClick={resetPOS}
-                  className="p-1.5 rounded-xl text-neutral-400 hover:text-neutral-700 hover:bg-[#FAF5F2] transition-colors shrink-0"
+                  className="p-1.5 rounded-xl text-neutral-400 hover:text-neutral-700 hover:bg-[#F8FAFC] transition-colors shrink-0"
                   title="Change Customer"
                 >
                   <X className="w-5 h-5" />
@@ -817,15 +817,15 @@ export default function CashierPage() {
                 <div>
                   <span className="text-[11px] text-neutral-500 block">Current Points Balance</span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-2xl font-black text-[#3F1215] font-mono">
+                    <span className="text-2xl font-black text-[#0A52A9] font-mono">
                       {identifiedCustomer.pointsBalance}
                     </span>
                     <span className="text-xs text-neutral-500 font-semibold">pts</span>
                   </div>
                 </div>
-                <div className="text-right bg-white/80 px-3 py-1.5 rounded-xl border border-[#EBD3C8]/70 shadow-2xs">
+                <div className="text-right bg-white/80 px-3 py-1.5 rounded-xl border border-[#E6DEBA]/70 shadow-2xs">
                   <span className="text-[10px] text-neutral-400 block font-medium">Member Tier</span>
-                  <span className="text-xs font-bold text-[#3F1215] uppercase tracking-wider">
+                  <span className="text-xs font-bold text-[#0A52A9] uppercase tracking-wider">
                     {identifiedCustomer.tier || "Member"}
                   </span>
                 </div>
@@ -833,7 +833,7 @@ export default function CashierPage() {
             </div>
 
             {/* Action Switcher: Credit Points vs. Redeem Reward */}
-            <div className="grid grid-cols-2 gap-2 glass-panel-subtle p-1 rounded-2xl border border-[#EBD3C8]/60">
+            <div className="grid grid-cols-2 gap-2 glass-panel-subtle p-1 rounded-2xl border border-[#E6DEBA]/60">
               <button
                 type="button"
                 onClick={() => {
@@ -842,7 +842,7 @@ export default function CashierPage() {
                 }}
                 className={`py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   actionTab === "credit"
-                    ? "bg-[#3F1215] text-[#FEECE2] shadow-xs"
+                    ? "bg-[#0A52A9] text-[#F4EECF] shadow-xs"
                     : "text-neutral-600 hover:text-neutral-900"
                 }`}
               >
@@ -858,7 +858,7 @@ export default function CashierPage() {
                 }}
                 className={`py-2.5 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   actionTab === "redeem"
-                    ? "bg-[#3F1215] text-[#FEECE2] shadow-xs"
+                    ? "bg-[#0A52A9] text-[#F4EECF] shadow-xs"
                     : "text-neutral-600 hover:text-neutral-900"
                 }`}
               >
@@ -871,7 +871,7 @@ export default function CashierPage() {
             {actionTab === "credit" && (
               <div className="glass-panel rounded-3xl p-5 sm:p-6 shadow-lg space-y-4">
                 <div>
-                  <h4 className="text-sm font-bold text-[#2B0B0D] mb-1">
+                  <h4 className="text-sm font-bold text-[#0B192C] mb-1">
                     Total Bill Amount
                   </h4>
                   <p className="text-[11px] text-neutral-500">
@@ -905,7 +905,7 @@ export default function CashierPage() {
                         autoFocus
                         required
                       />
-                      <span className="absolute right-3 px-2.5 py-1 rounded-xl bg-[#FAF5F2]/80 border border-[#EBD3C8] text-xs font-bold text-[#3F1215] font-mono pointer-events-none">
+                      <span className="absolute right-3 px-2.5 py-1 rounded-xl bg-[#F8FAFC]/80 border border-[#E6DEBA] text-xs font-bold text-[#0A52A9] font-mono pointer-events-none">
                         {config.currency}
                       </span>
                     </div>
@@ -920,7 +920,7 @@ export default function CashierPage() {
                             const current = parseFloat(billAmount) || 0;
                             setBillAmount((current + val).toFixed(3));
                           }}
-                          className="px-2.5 py-1.5 rounded-xl glass-panel-subtle hover:bg-white active:scale-95 text-[#2B0B0D] text-xs font-mono font-bold transition-all cursor-pointer"
+                          className="px-2.5 py-1.5 rounded-xl glass-panel-subtle hover:bg-white active:scale-95 text-[#0B192C] text-xs font-mono font-bold transition-all cursor-pointer"
                         >
                           +{val.toFixed(3)}
                         </button>
@@ -937,11 +937,11 @@ export default function CashierPage() {
 
                   {/* Real-time points preview */}
                   <div className="p-3.5 glass-panel-subtle rounded-2xl flex items-center justify-between">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#2B0B0D]">
-                      <Sparkles className="w-4 h-4 text-[#3F1215]" />
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#0B192C]">
+                      <Sparkles className="w-4 h-4 text-[#0A52A9]" />
                       <span>Points to be Earned:</span>
                     </div>
-                    <span className="text-base font-black font-mono text-[#3F1215]">
+                    <span className="text-base font-black font-mono text-[#0A52A9]">
                       +{calculatedPoints} pts
                     </span>
                   </div>
@@ -951,7 +951,7 @@ export default function CashierPage() {
                     <button
                       type="button"
                       onClick={resetPOS}
-                      className="px-4 py-3 rounded-2xl border border-[#EBD3C8] text-neutral-600 hover:bg-[#FAF5F2] text-xs font-bold transition-colors cursor-pointer"
+                      className="px-4 py-3 rounded-2xl border border-[#E6DEBA] text-neutral-600 hover:bg-[#F8FAFC] text-xs font-bold transition-colors cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -959,7 +959,7 @@ export default function CashierPage() {
                     <button
                       type="submit"
                       disabled={transactLoading || !billAmount || parseFloat(billAmount) <= 0}
-                      className="flex-1 py-3.5 rounded-2xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-sm font-bold transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-98"
+                      className="flex-1 py-3.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-sm font-bold transition-all disabled:opacity-40 flex items-center justify-center gap-2 shadow-sm cursor-pointer active:scale-98"
                     >
                       {transactLoading ? (
                         <>
@@ -982,7 +982,7 @@ export default function CashierPage() {
             {actionTab === "redeem" && (
               <div className="glass-panel rounded-3xl p-5 sm:p-6 shadow-lg space-y-4">
                 <div>
-                  <h4 className="text-sm font-bold text-[#2B0B0D] mb-1">
+                  <h4 className="text-sm font-bold text-[#0B192C] mb-1">
                     Redeem Reward or Instant Discount
                   </h4>
                   <p className="text-[11px] text-neutral-500">
@@ -1047,7 +1047,7 @@ export default function CashierPage() {
                     <button
                       type="button"
                       onClick={resetPOS}
-                      className="px-4 py-3 rounded-2xl border border-[#EBD3C8] text-neutral-600 hover:bg-[#FAF5F2] text-xs font-bold transition-colors cursor-pointer"
+                      className="px-4 py-3 rounded-2xl border border-[#E6DEBA] text-neutral-600 hover:bg-[#F8FAFC] text-xs font-bold transition-colors cursor-pointer"
                     >
                       Cancel
                     </button>
@@ -1061,7 +1061,7 @@ export default function CashierPage() {
                         parseInt(redeemPoints) <= 0 ||
                         parseInt(redeemPoints) > identifiedCustomer.pointsBalance
                       }
-                      className="flex-1 py-3.5 rounded-2xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-sm font-bold transition-all disabled:opacity-40 cursor-pointer shadow-sm active:scale-98 flex items-center justify-center gap-2"
+                      className="flex-1 py-3.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-sm font-bold transition-all disabled:opacity-40 cursor-pointer shadow-sm active:scale-98 flex items-center justify-center gap-2"
                     >
                       {redeemLoading ? (
                         <>
@@ -1088,11 +1088,11 @@ export default function CashierPage() {
         {receipt && (
           <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
             <div className="glass-panel rounded-3xl p-5 sm:p-7 max-w-sm w-full shadow-2xl text-center animate-in fade-in zoom-in-95 duration-200">
-              <div className="w-14 h-14 rounded-full bg-[#FDF4F0] border-2 border-[#EBD3C8] text-[#3F1215] flex items-center justify-center mx-auto mb-3 shadow-xs">
-                <CheckCircle2 className="w-8 h-8 text-[#3F1215]" />
+              <div className="w-14 h-14 rounded-full bg-[#FDFBF4] border-2 border-[#E6DEBA] text-[#0A52A9] flex items-center justify-center mx-auto mb-3 shadow-xs">
+                <CheckCircle2 className="w-8 h-8 text-[#0A52A9]" />
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-[#2B0B0D] mb-1">
+              <h3 className="text-lg sm:text-xl font-bold text-[#0B192C] mb-1">
                 Transaction Successful!
               </h3>
               <p className="text-xs text-neutral-500 mb-4 font-mono">
@@ -1102,13 +1102,13 @@ export default function CashierPage() {
               <div className="glass-panel-subtle rounded-2xl p-4 mb-5 text-left space-y-2 text-xs">
                 <div className="flex justify-between">
                   <span className="text-neutral-500">Customer:</span>
-                  <span className="font-bold text-[#2B0B0D]">{receipt.customerName}</span>
+                  <span className="font-bold text-[#0B192C]">{receipt.customerName}</span>
                 </div>
 
                 {receipt.billAmount && (
                   <div className="flex justify-between">
                     <span className="text-neutral-500">Bill Amount:</span>
-                    <span className="font-mono font-bold text-[#2B0B0D]">
+                    <span className="font-mono font-bold text-[#0B192C]">
                       {receipt.billAmount.toFixed(3)} {receipt.currency}
                     </span>
                   </div>
@@ -1126,9 +1126,9 @@ export default function CashierPage() {
                   </div>
                 )}
 
-                <div className="pt-2 border-t border-[#EBD3C8] flex justify-between font-extrabold text-sm">
-                  <span className="text-[#2B0B0D]">New Balance:</span>
-                  <span className="font-mono text-[#3F1215]">{receipt.newBalance} pts</span>
+                <div className="pt-2 border-t border-[#E6DEBA] flex justify-between font-extrabold text-sm">
+                  <span className="text-[#0B192C]">New Balance:</span>
+                  <span className="font-mono text-[#0A52A9]">{receipt.newBalance} pts</span>
                 </div>
 
                 {receipt.tierUpgraded && (
@@ -1141,7 +1141,7 @@ export default function CashierPage() {
 
               <button
                 onClick={resetPOS}
-                className="w-full py-3.5 rounded-2xl bg-[#3F1215] hover:bg-[#2B0B0D] text-[#FEECE2] text-sm font-bold transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-2xl bg-[#0A52A9] hover:bg-[#073B7A] text-[#F4EECF] text-sm font-bold transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-2"
               >
                 <span>Next Customer</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1170,28 +1170,28 @@ export default function CashierPage() {
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="w-12 h-12 rounded-2xl bg-[#3F1215] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
+              <div className="w-12 h-12 rounded-2xl bg-[#0A52A9] text-white flex items-center justify-center mx-auto mb-3 shadow-md">
                 <Smartphone className="w-6 h-6" />
               </div>
 
-              <h3 className="text-base font-bold text-center text-[#2B0B0D] mb-1">
+              <h3 className="text-base font-bold text-center text-[#0B192C] mb-1">
                 Install Cashier to Home Screen
               </h3>
               <p className="text-xs text-neutral-500 text-center mb-4">
                 Install a dedicated Cashier POS icon that opens this terminal directly:
               </p>
 
-              <div className="space-y-3 glass-panel-subtle rounded-2xl p-4 text-xs text-[#2B0B0D]">
+              <div className="space-y-3 glass-panel-subtle rounded-2xl p-4 text-xs text-[#0B192C]">
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-                  <span>Tap the <strong>Share</strong> button <Share2 className="w-3.5 h-3.5 inline mx-0.5 text-[#3F1215]" /> in Safari or <strong>Menu (⋮)</strong> in Chrome.</span>
+                  <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
+                  <span>Tap the <strong>Share</strong> button <Share2 className="w-3.5 h-3.5 inline mx-0.5 text-[#0A52A9]" /> in Safari or <strong>Menu (⋮)</strong> in Chrome.</span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
+                  <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
                   <span>Select <strong>&quot;Add to Home Screen&quot;</strong>.</span>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <span className="w-5 h-5 rounded-full bg-[#3F1215] text-[#FEECE2] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
+                  <span className="w-5 h-5 rounded-full bg-[#0A52A9] text-[#F4EECF] text-[11px] font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
                   <span>Tap <strong>Add</strong>. The icon will be named <strong>jari Cashier</strong> and will open this Cashier POS terminal directly.</span>
                 </div>
               </div>
@@ -1199,7 +1199,7 @@ export default function CashierPage() {
               <button
                 type="button"
                 onClick={() => setShowInstallGuide(false)}
-                className="w-full mt-4 py-2.5 rounded-xl bg-[#3F1215] text-[#FEECE2] text-xs font-bold hover:bg-[#2B0B0D] transition-colors cursor-pointer"
+                className="w-full mt-4 py-2.5 rounded-xl bg-[#0A52A9] text-[#F4EECF] text-xs font-bold hover:bg-[#073B7A] transition-colors cursor-pointer"
               >
                 Got It
               </button>
@@ -1209,7 +1209,7 @@ export default function CashierPage() {
       </main>
 
       {/* Mobile-Friendly Footer */}
-      <footer className="border-t border-[#EBD3C8]/60 bg-white py-2.5 px-4 text-center text-[11px] text-neutral-400">
+      <footer className="border-t border-[#E6DEBA]/60 bg-white py-2.5 px-4 text-center text-[11px] text-neutral-400">
         jari POS Terminal • Real-Time Sync with Customer Pass
       </footer>
     </div>

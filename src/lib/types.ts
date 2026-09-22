@@ -7,10 +7,10 @@ export interface ITenantConfig {
   storeName: string;
   tagline: string;
   logoUrl?: string;
-  primaryColor: string; // e.g. #2C221E
-  accentColor: string;  // e.g. #1A5336
-  terracottaColor?: string; // e.g. #C87D55
-  currency: string;      // e.g. KWD, USD, SAR
+  primaryColor: string; // e.g. #0A52A9
+  accentColor: string;  // e.g. #F4EECF
+  terracottaColor?: string; // e.g. #073B7A
+  currency: string;      // e.g. JOD
   pointsPerUnit: number; // e.g. 10 points per 1.00 currency
   discountPer100Pts: number; // e.g. 1.00 currency discount per 100 points
   welcomeBonusPts: number;   // e.g. 50 points on signup
