@@ -1638,13 +1638,6 @@ export default function CustomerPage() {
               </span>
             </div>
 
-            {/* Cashier-Only Activation Notice */}
-            <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200/80 text-[11px] text-amber-900 mb-4 flex items-start gap-2">
-              <ShieldCheck className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
-              <p className="leading-snug">
-                Present this code to the cashier at the counter. The discount will only be applied and points deducted once confirmed by the cashier.
-              </p>
-            </div>
 
             <button
               onClick={() => setRedeemingReward(null)}
