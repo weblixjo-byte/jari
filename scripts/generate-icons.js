@@ -2,7 +2,10 @@ const sharp = require('sharp');
 const path = require('path');
 const fs = require('fs');
 
-const srcPath = path.join(__dirname, '../public/jari-logo.png');
+let srcPath = path.join(__dirname, '../public/jari-logo.png');
+if (!fs.existsSync(srcPath)) {
+  srcPath = path.join(__dirname, '../public/logo.png');
+}
 
 async function generate() {
   console.log('Generating jari icons from:', srcPath);
@@ -11,43 +14,45 @@ async function generate() {
     throw new Error('Source logo not found at ' + srcPath);
   }
 
+  const srcBuffer = fs.readFileSync(srcPath);
+
   // 1. Logo (clean high-res 1024x1024)
-  await sharp(srcPath)
+  await sharp(srcBuffer)
     .resize(1024, 1024, { fit: 'contain' })
     .png()
     .toFile('public/logo.png');
   console.log('Saved public/logo.png');
 
   // 2. Standard PWA Icon 192
-  await sharp(srcPath)
+  await sharp(srcBuffer)
     .resize(192, 192, { fit: 'contain' })
     .png()
     .toFile('public/icon-192.png');
   console.log('Saved public/icon-192.png');
 
   // 3. Standard PWA Icon 512
-  await sharp(srcPath)
+  await sharp(srcBuffer)
     .resize(512, 512, { fit: 'contain' })
     .png()
     .toFile('public/icon-512.png');
   console.log('Saved public/icon-512.png');
 
   // 4. Apple Touch Icon 180x180
-  await sharp(srcPath)
+  await sharp(srcBuffer)
     .resize(180, 180, { fit: 'contain' })
     .png()
     .toFile('public/apple-touch-icon.png');
   console.log('Saved public/apple-touch-icon.png');
 
   // 5. Favicon PNG (48x48)
-  await sharp(srcPath)
+  await sharp(srcBuffer)
     .resize(48, 48, { fit: 'contain' })
     .png()
     .toFile('public/favicon.png');
   console.log('Saved public/favicon.png');
 
   // Favicon ICO (32x32)
-  await sharp(srcPath)
+  await sharp(srcBuffer)
     .resize(32, 32, { fit: 'contain' })
     .png()
     .toFile('public/favicon.ico');
@@ -63,7 +68,7 @@ async function generate() {
   async function makeCashierIcon(size, filename) {
     const pad = Math.round(size * 0.08);
     const innerSize = size - pad * 2;
-    const logoResized = await sharp(srcPath)
+    const logoResized = await sharp(srcBuffer)
       .resize(innerSize, innerSize, { fit: 'contain' })
       .toBuffer();
 
