@@ -1178,29 +1178,11 @@ export default function CustomerPage() {
                   Fallback 6-Digit Counter PIN
                 </span>
 
-                <div className="flex items-center justify-center gap-3">
-                  <span className="font-pin text-2xl font-bold tracking-widest text-[#0B192C] select-all">
+                <div className="flex items-center justify-center">
+                  <span className="font-pin text-2xl sm:text-3xl font-bold tracking-widest text-[#0B192C] select-all">
                     {customer.formattedPin}
                   </span>
-
-                  <button
-                    onClick={handleCopyPin}
-                    className="p-1.5 rounded-lg border border-[#E6DEBA] bg-white hover:bg-[#FDFBF4] text-neutral-600 transition-colors active:scale-95 cursor-pointer"
-                    title="Copy PIN"
-                  >
-                    {copied ? (
-                      <Check className="w-4 h-4 text-emerald-600" />
-                    ) : (
-                      <Copy className="w-4 h-4" />
-                    )}
-                  </button>
                 </div>
-
-                {copied && (
-                  <span className="text-[10px] font-mono text-[#0A52A9] mt-1 block">
-                    Copied to clipboard!
-                  </span>
-                )}
               </div>
 
               {/* Live Points Counter */}
@@ -1633,33 +1615,11 @@ export default function CustomerPage() {
               <span className="text-[10px] uppercase tracking-wider font-mono text-neutral-500 block mb-1.5 font-semibold">
                 Give this Reward Code to Cashier
               </span>
-              <div className="flex items-center justify-center gap-2 whitespace-nowrap overflow-x-auto py-0.5">
-                <span className="font-pin text-xl sm:text-2xl md:text-3xl font-bold tracking-wider text-[#0A52A9] select-all whitespace-nowrap">
+              <div className="flex items-center justify-center py-1">
+                <span className="font-pin text-2xl sm:text-3xl md:text-4xl font-bold tracking-wider text-[#0A52A9] select-all whitespace-nowrap">
                   {customer.formattedPin} - {redeemingReward.claimCode || "10"}
                 </span>
-                <button
-                  onClick={() =>
-                    handleCopyPin(
-                      `${(customer.rawPin || customer.formattedPin || "").replace(/\D/g, "")}-${
-                        redeemingReward.claimCode || "10"
-                      }`
-                    )
-                  }
-                  className="p-1.5 sm:p-2 rounded-xl border border-[#E6DEBA] bg-white/90 hover:bg-[#FDFBF4] text-neutral-600 transition-colors active:scale-95 cursor-pointer shrink-0 shadow-2xs"
-                  title="Copy Full Reward Code"
-                >
-                  {copied ? (
-                    <Check className="w-4 h-4 text-emerald-600" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </button>
               </div>
-              {copied && (
-                <span className="text-[10px] font-mono text-[#0A52A9] mt-1.5 block">
-                  Copied reward code to clipboard!
-                </span>
-              )}
             </div>
 
             {/* QR Code Presentation with Reward Claim Suffix */}
